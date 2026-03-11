@@ -14,8 +14,8 @@
 
 <div class="mb-16 pb-8 border-b border-border flex justify-between items-end gap-4 flex-wrap">
 	<div>
-		<h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 uppercase text-primary">Global Registry</h1>
-		<p class="font-mono text-secondary text-sm">Indexed {projects.length} experimental and production artifacts.</p>
+		<h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 uppercase text-primary">Project Database</h1>
+		<p class="font-mono text-secondary text-sm">Indexed {projects.length} projects across {domains.length} domains</p>
 	</div>
 </div>
 
@@ -27,7 +27,7 @@
 			<div class="absolute -left-3 top-0 bottom-0 w-px bg-border hidden md:block"></div>
 			
 			<div class="sticky top-0 bg-background/90 backdrop-blur-md pt-4 pb-6 z-10 font-mono tracking-widest text-primary flex items-center gap-4 border-b border-border/50">
-				<div class="w-3 h-3 bg-accent hidden md:block absolute -left-[5px]"></div>
+				<div class="w-3 h-3 bg-accent hidden md:block absolute -left-[17.5px]"></div>
 				<h2 class="text-xl uppercase font-bold">{domain}</h2>
 				<span class="text-secondary text-xs">{domainProjects.length} Entries</span>
 			</div>

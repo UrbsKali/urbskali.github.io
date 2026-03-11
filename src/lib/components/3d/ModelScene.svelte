@@ -2,7 +2,7 @@
 	import { T, useTask, useThrelte } from '@threlte/core';
 	import { OrbitControls, ContactShadows, HTML, interactivity, useGltf, useGltfAnimations } from '@threlte/extras';
 	import { spring } from 'svelte/motion';
-	import { MeshStandardMaterial, ShaderMaterial, Box3, Vector3, Mesh, Vector2, Group, type Object3D } from 'three';
+	import { MeshStandardMaterial, ShaderMaterial, Box3, Vector3, Mesh, Vector2, Group, type Object3D, log } from 'three';
 	import type { ProjectHotspot } from '$lib/types';
 
 	// Enable Raycasting for hover events within Threlte
@@ -243,22 +243,38 @@
 		<!-- Hotspot Annotations overlay -->
 		{#each hotspots as hs}
 			<HTML position={hs.position} center>
-				<div class="group relative flex items-center justify-center pointer-events-auto cursor-pointer w-12 h-12">
-					<!-- Pulsing node -->
+				<div class="hotspot-root relative flex items-center justify-center pointer-events-none w-12 h-12">
+					<!-- Pulsing node (always visible, hoverable) -->
 					<div class="w-3 h-3 bg-accent rounded-full animate-ping absolute opacity-80"></div>
-					<div class="w-2 h-2 bg-accent rounded-full relative z-10 border border-surface"></div>
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div
+						class="w-4 h-4 rounded-full absolute z-10 pointer-events-auto cursor-pointer flex items-center justify-center"
+						onmouseenter={(e) => e.currentTarget.closest('.hotspot-root')?.classList.add('is-hovered')}
+						onmouseleave={(e) => e.currentTarget.closest('.hotspot-root')?.classList.remove('is-hovered')}>
+						<div class="w-2 h-2 bg-accent rounded-full border border-surface"></div>
+					</div>
 
-					
 					<!-- Expandable technical data card -->
-					<div class="absolute left-6 top-1/2 -translate-y-1/2 border border-accent/40 bg-surface/95 backdrop-blur-md p-3 w-56 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none translate-x-2 group-hover:translate-x-0 shadow-lg">
+					<div class="hotspot-card absolute left-10 top-1/2 -translate-y-1/2 border border-accent/40 bg-surface/95 backdrop-blur-md p-3 w-56 transition-all duration-300 pointer-events-none shadow-lg opacity-0 translate-x-2 z-20">
 						<div class="font-mono text-[10px] text-accent font-bold uppercase border-b border-accent/20 pb-1 mb-2 tracking-widest">{hs.label}</div>
 						<div class="font-sans text-xs text-primary leading-relaxed">{hs.description}</div>
 					</div>
 					
 					<!-- Connection line to UI card -->
-					<div class="absolute left-2 top-1/2 w-4 h-px bg-accent/40 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+					<div class="hotspot-line absolute left-2 top-1/2 w-8 h-px bg-accent/40 transition-opacity opacity-0"></div>
 				</div>
 			</HTML>
 		{/each}
 	</T.Group>
 {/if}
+
+<style>
+	:global(.hotspot-root.is-hovered .hotspot-card) {
+		opacity: 1;
+		/* transform: translateY(-50%) translateX(0); */
+	}
+	:global(.hotspot-root.is-hovered .hotspot-line) {
+		opacity: 1;
+	}
+</style>
+
