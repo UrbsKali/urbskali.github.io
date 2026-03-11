@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 
@@ -17,11 +18,11 @@
 <div class="min-h-screen font-sans text-primary">
 	<header class="max-w-screen-xl mx-auto px-6 py-8 border-b border-border flex justify-between items-center">
 		<div class="font-mono text-sm tracking-widest font-bold uppercase">
-			<a href="/" class="hover:text-accent transition-colors">Urbain <span class="text-accent">/</span> Portfolio</a>
+			<a href="{base}/" class="hover:text-accent transition-colors">Urbain <span class="text-accent">/</span> Portfolio</a>
 		</div>
 		<nav class="font-mono text-xs text-secondary flex gap-8">
-			<a href="/" class="hover:text-accent transition-colors">HOME</a>
-			<a href="/projects" class="hover:text-accent transition-colors">PROJECTS</a>
+			<a href="{base}/" class="hover:text-accent transition-colors">HOME</a>
+			<a href="{base}/projects" class="hover:text-accent transition-colors">PROJECTS</a>
 		</nav>
 	</header>
 

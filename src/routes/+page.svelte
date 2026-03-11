@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { projects } from '$lib/data/projects';
 	import ProjectCard from '$lib/components/project/ProjectCard.svelte';
 	import ProjectSelector3D from '$lib/components/3d/ProjectSelector3D.svelte';
@@ -27,7 +28,7 @@
 		</p>
 
 		<div class="flex gap-6 font-mono text-sm">
-			<a href="/projects" class="bg-primary text-surface px-6 py-4 hover:bg-accent transition-colors uppercase tracking-wider border border-primary">
+			<a href="{base}/projects" class="bg-primary text-surface px-6 py-4 hover:bg-accent transition-colors uppercase tracking-wider border border-primary">
 				Explore Projects
 				<span class="ml-2 opacity-100">-&gt;</span>
 			</a>
@@ -44,7 +45,7 @@
 <section class="border-t border-border pt-24">
 	<div class="flex justify-between items-end mb-12">
 		<h2 class="text-2xl font-bold uppercase tracking-tight">Recent Projects</h2>
-		<a href="/projects" class="font-mono text-xs text-secondary hover:text-accent transition-colors uppercase tracking-widest">View All Projects -></a>
+		<a href="{base}/projects" class="font-mono text-xs text-secondary hover:text-accent transition-colors uppercase tracking-widest">View All Projects -></a>
 	</div>
 
 	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import type { Project } from '$lib/types';
 	export let project: Project;
 </script>
 
-<a href={`/projects/${project.slug}`} class="block group relative bg-surface border border-border p-6 hover:border-accent transition-colors duration-300">
+<a href="{base}/projects/{project.slug}" class="block group relative bg-surface border border-border p-6 hover:border-accent transition-colors duration-300">
 	<!-- Technical Crosshairs -->
 	<div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary opacity-20 group-hover:opacity-100 group-hover:border-accent transition-opacity"></div>
 	<div class="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary opacity-20 group-hover:opacity-100 group-hover:border-accent transition-opacity"></div>

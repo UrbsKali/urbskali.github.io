@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import ModelViewer from '$lib/components/3d/ModelViewer.svelte';
 	let { data } = $props();
 	let { project } = data;
@@ -26,7 +27,7 @@
 <div class="relative min-h-[200vh]">
 	<!-- Fixed Header Return Link -->
 	<div class="fixed top-16 left-8 z-50">
-		<a href="/projects" class="font-mono text-xs text-secondary hover:text-accent transition-colors uppercase tracking-widest block"
+		<a href="{base}/projects" class="font-mono text-xs text-secondary hover:text-accent transition-colors uppercase tracking-widest block"
 		   style="opacity: {uiOpacity}">
 			&lt;- Return to Registry
 		</a>
