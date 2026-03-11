@@ -1,0 +1,48 @@
+<svelte:head>
+	<title>Profile | Urbain Systems</title>
+</svelte:head>
+
+<div class="max-w-3xl mx-auto pt-16">
+	<div class="border border-border bg-surface p-8 relative mb-12">
+		<div class="absolute top-0 right-0 p-4 border-b border-l border-border bg-background font-mono text-xs text-secondary uppercase">
+			CREDENTIAL: URBAIN
+		</div>
+
+		<h1 class="text-4xl lg:text-5xl font-bold uppercase tracking-tight mb-8 mt-4 text-primary leading-tight">
+			Operator Profile
+		</h1>
+
+		<div class="grid grid-cols-2 md:grid-cols-4 gap-8 font-mono text-sm border-t border-border pt-8">
+			<div>
+				<div class="text-secondary text-xs uppercase mb-1">Status</div>
+				<div class="font-bold text-accent">Active</div>
+			</div>
+			<div>
+				<div class="text-secondary text-xs uppercase mb-1">Location</div>
+				<div class="font-bold">Earth</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="prose prose-slate max-w-none font-sans text-secondary leading-relaxed">
+		<p class="text-lg">
+			I am a multidisciplinary engineer specializing in the intersection of software, electronics, and mechanical systems.
+			I build physical and digital artifacts with an emphasis on performance, minimal design, and modular architecture.
+		</p>
+		
+		<h2 class="text-xl font-bold uppercase tracking-tight text-primary mt-12 mb-4">Core Competencies</h2>
+		
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-8 not-prose">
+			<ul class="font-mono text-sm space-y-2">
+				<li class="flex items-center gap-2"><span class="text-accent">+</span> Rust & C++</li>
+				<li class="flex items-center gap-2"><span class="text-accent">+</span> TypeScript & Svelte</li>
+				<li class="flex items-center gap-2"><span class="text-accent">+</span> 3D Graphics (Three.js/WebGL)</li>
+			</ul>
+			<ul class="font-mono text-sm space-y-2">
+				<li class="flex items-center gap-2"><span class="text-accent">+</span> PCB Design & Firmware</li>
+				<li class="flex items-center gap-2"><span class="text-accent">+</span> CAD (SolidWorks) & 3D Printing</li>
+				<li class="flex items-center gap-2"><span class="text-accent">+</span> Agile Project Management</li>
+			</ul>
+		</div>
+	</div>
+</div>
