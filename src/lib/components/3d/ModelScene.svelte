@@ -1,18 +1,20 @@
 <script lang="ts">
 	import { T, useTask, useThrelte } from '@threlte/core';
 	import { OrbitControls, ContactShadows, HTML, interactivity, useGltf, useGltfAnimations } from '@threlte/extras';
-	import { spring } from 'svelte/motion';
-	import { MeshStandardMaterial, ShaderMaterial, Box3, Vector3, Mesh, Vector2, Group, type Object3D, log } from 'three';
+	import { cubicOut } from 'svelte/easing';
+	import { spring, Tween } from 'svelte/motion';
+	import { Box3, DoubleSide, Group, Mesh, ShaderMaterial, SRGBColorSpace, TextureLoader, Vector2, Vector3, type Object3D, type Texture } from 'three';
 	import type { ProjectHotspot } from '$lib/types';
 
 	// Enable Raycasting for hover events within Threlte
 	interactivity();
 
-	let { url, cursorPos = { x: 0, y: 0 }, xrayLensRadius = 120, hotspots = [] }: { 
+	let { url, cursorPos = { x: 0, y: 0 }, xrayLensRadius = 120, hotspots = [], imageUrls = [] }: { 
 		url: string; 
 		cursorPos?: { x: number; y: number };
 		xrayLensRadius?: number;
-		hotspots?: ProjectHotspot[] 
+		hotspots?: ProjectHotspot[];
+		imageUrls?: string[];
 	} = $props();
 
 	// Hook-based loading gives us full access to the logical 3D tree
@@ -22,6 +24,9 @@
 
 	let hasAnimations = false;
 	const explodeSpring = spring(0, { stiffness: 0.08, damping: 0.35 });
+	const modelSlideX = new Tween(0, { duration: 380, easing: cubicOut });
+	const MODEL_SLIDE_DURATION = 380;
+	const MODEL_SLIDE_OFFSET = 1;
 
 	// X-ray lens shader — renders wireframe inside a circular screen-space region
 	const xrayVertexShader = `
@@ -53,6 +58,74 @@
 	// Keep track of active xray materials so we can update uniforms each frame
 	let xrayMaterials: ShaderMaterial[] = [];
 	let xrayScene: Group | null = $state(null);
+	let imageTextures: Texture[] = $state([]);
+	const modelSlideCurrent = $derived(Math.abs(modelSlideX.current) < 0.0001 ? 0 : modelSlideX.current);
+
+	$effect(() => {
+		url;
+
+		if (typeof window === 'undefined') {
+			modelSlideX.target = 0;
+			return;
+		}
+
+		modelSlideX.target = MODEL_SLIDE_OFFSET;
+
+		const rafId = window.requestAnimationFrame(() => {
+			void modelSlideX.set(0, { duration: MODEL_SLIDE_DURATION, easing: cubicOut });
+		});
+
+		const settleId = window.setTimeout(() => {
+			modelSlideX.target = 0;
+		}, MODEL_SLIDE_DURATION + 40);
+
+		return () => {
+			window.cancelAnimationFrame(rafId);
+			window.clearTimeout(settleId);
+		};
+	});
+
+	$effect(() => {
+		const urls = imageUrls.filter((imageUrl) => imageUrl.length > 0);
+
+		if (urls.length === 0) {
+			imageTextures = [];
+			return;
+		}
+
+		let cancelled = false;
+		const loader = new TextureLoader();
+
+		Promise.all(
+			urls.map(
+				(src) =>
+					new Promise<Texture>((resolve, reject) => {
+						loader.load(
+							src,
+							(texture) => {
+								texture.colorSpace = SRGBColorSpace;
+								resolve(texture);
+							},
+							undefined,
+							(err) => reject(err)
+						);
+					})
+			)
+		)
+			.then((textures) => {
+				if (cancelled) return;
+				imageTextures = textures;
+			})
+			.catch((err) => {
+				if (cancelled) return;
+				console.error('Failed to load project image textures:', err);
+				imageTextures = [];
+			});
+
+		return () => {
+			cancelled = true;
+		};
+	});
 
 	// Modify scene topology whenever model or x-ray mode updates
 	$effect(() => {
@@ -203,6 +276,12 @@
 			}
 		});
 	});
+
+	function getTextureAspect(texture: Texture) {
+		const image = texture.image as { width?: number; height?: number } | null;
+		if (!image?.width || !image?.height) return 1.35;
+		return image.width / image.height;
+	}
 </script>
 
 <T.PerspectiveCamera makeDefault position={[5, 4, 5]} fov={40}>
@@ -227,7 +306,7 @@
 
 <!-- Only render the scene tree once loaded -->
 {#if $gltf}
-	<T.Group position={[0, 0, 0]}>
+	<T.Group position={[modelSlideCurrent * 2.2, 0, 0]}>
 		<T is={$gltf.scene} 
 			onpointerenter={handlePointerEnter}
 			onpointerleave={handlePointerLeave} 
@@ -237,6 +316,26 @@
 		{#if xrayScene}
 			<T is={xrayScene} />
 		{/if}
+
+		{#each imageTextures as texture, index}
+			{@const imageCount = imageTextures.length}
+			{@const angle = (index / imageCount) * Math.PI * 2}
+			{@const y = (index % 2) * 0.55 - 0.2}
+			{@const aspect = getTextureAspect(texture)}
+			{@const planeHeight = 0.85}
+			{@const planeWidth = planeHeight * aspect}
+
+			<T.Group position={[Math.cos(angle) * 3.1, y, Math.sin(angle) * 3.1]} rotation={[0.04, -angle + Math.PI / 2, 0]}>
+				<T.Mesh position={[0, 0, -0.02]}>
+					<T.PlaneGeometry args={[planeWidth + 0.1, planeHeight + 0.1]} />
+					<T.MeshStandardMaterial color="#e5e7eb" roughness={0.82} metalness={0.06} />
+				</T.Mesh>
+				<T.Mesh>
+					<T.PlaneGeometry args={[planeWidth, planeHeight]} />
+					<T.MeshBasicMaterial map={texture} transparent={true} toneMapped={false} side={DoubleSide} />
+				</T.Mesh>
+			</T.Group>
+		{/each}
 		
 		<ContactShadows scale={10} blur={2} far={2.5} opacity={0.4} y={-0.01} />
 		

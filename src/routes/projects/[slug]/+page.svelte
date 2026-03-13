@@ -2,7 +2,7 @@
 	import { base } from '$app/paths';
 	import ModelViewer from '$lib/components/3d/ModelViewer.svelte';
 	let { data } = $props();
-	let { project } = data;
+	let project = $derived(data.project);
 	
 	let scrollY = $state(0);
 	let windowHeight = $state(1000);
@@ -16,6 +16,7 @@
 	let modelY = $derived(scrollProgress * -30); // Moves up ~30vh
 	
 	let uiOpacity = $derived(1 - (scrollProgress * 2)); // Fades out twice as fast
+	let has3DContent = $derived(Boolean(project.model_3d) || (project.models_3d?.length ?? 0) > 0 || (project.images?.length ?? 0) > 0);
 </script>
 
 <svelte:window bind:scrollY={scrollY} bind:innerHeight={windowHeight} />
@@ -38,7 +39,7 @@
 		<!-- Central 3D Viewer Container which scales and moves on scroll -->
 		<div class="render-container w-full h-full flex items-center justify-center absolute inset-0 z-10 pointer-events-none"
 			 style="transform: scale({modelScale}) translate3d({modelX}vw, {modelY}vh, 0); transform-origin: center;">
-			{#if project.model_3d}
+			{#if has3DContent}
 				<div class="w-full h-full pointer-events-auto" id="model-wrapper">
 					<ModelViewer project={project} />
 				</div>
@@ -46,7 +47,7 @@
 		</div>
 
 		<!-- UI Overlay -->
-		<div class="absolute inset-0 z-0 pointer-events-none p-8 flex flex-col justify-between" id="ui-overlay" style="opacity: {Math.max(uiOpacity, 0)}">
+		<div class="absolute inset-0 z-20 pointer-events-none p-8 flex flex-col justify-between" id="ui-overlay" style="opacity: {Math.max(uiOpacity, 0)}">
 
 			<!-- Top Row -->
 			<div class="flex justify-center  mb-4">
