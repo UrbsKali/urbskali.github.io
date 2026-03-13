@@ -25,6 +25,7 @@ export interface Project {
 	images: string[];         // URLs to static assets
 	model_3d?: string;        // Optional URL to .glb/.gltf file
 	models_3d?: string[];     // Optional list of URLs for multi-model projects
-	hotspots?: ProjectHotspot[]; // Optional 3D spatial annotations
+	hotspots?: ProjectHotspot[]; // Optional 3D spatial annotations (single model fallback)
+	hotspots_per_model?: ProjectHotspot[][]; // hotspots_per_model[i] = hotspots for models_3d[i]
 	links: ProjectLink[];
 }

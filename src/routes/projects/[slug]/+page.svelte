@@ -11,23 +11,22 @@
 	let scrollProgress = $derived(Math.min(scrollY / windowHeight, 1));
 	
 	// Derive styles based on scroll progress
-	let modelScale = $derived(1 - (scrollProgress * 0.7)); // Shrinks from 1 to 0.3
 	let modelX = $derived(scrollProgress * 30); // Moves right ~30vw
 	let modelY = $derived(scrollProgress * -30); // Moves up ~30vh
 	
-	let uiOpacity = $derived(1 - (scrollProgress * 2)); // Fades out twice as fast
+	let uiOpacity = $derived(1 - (scrollProgress * 4)); 
 	let has3DContent = $derived(Boolean(project.model_3d) || (project.models_3d?.length ?? 0) > 0 || (project.images?.length ?? 0) > 0);
 </script>
 
 <svelte:window bind:scrollY={scrollY} bind:innerHeight={windowHeight} />
 
 <svelte:head>
-	<title>{project.name} | Urbain Systems</title>
+	<title>{project.name} | Urbain</title>
 </svelte:head>
 
 <div class="relative min-h-[200vh]">
 	<!-- Fixed Header Return Link -->
-	<div class="fixed top-16 left-8 z-50">
+	<div class="fixed top-16 2xl:left-45 ">
 		<a href="{base}/projects" class="font-mono text-xs text-secondary hover:text-accent transition-colors uppercase tracking-widest block"
 		   style="opacity: {uiOpacity}">
 			&lt;- Return to Registry
@@ -35,10 +34,10 @@
 	</div>
 
 	<!-- Sticky Hero Section -->
-	<div class="sticky top-0 h-screen w-full flex overflow-hidden">
-		<!-- Central 3D Viewer Container which scales and moves on scroll -->
+	<div class="sticky top-0 h-[80vh] w-full flex overflow-hidden">
+		<!-- Central 3D Viewer Container which moves on scroll -->
 		<div class="render-container w-full h-full flex items-center justify-center absolute inset-0 z-10 pointer-events-none"
-			 style="transform: scale({modelScale}) translate3d({modelX}vw, {modelY}vh, 0); transform-origin: center;">
+			 style="transform: translate3d({modelX}vw, {modelY}vh, 0); transform-origin: center;">
 			{#if has3DContent}
 				<div class="w-full h-full pointer-events-auto" id="model-wrapper">
 					<ModelViewer project={project} />
@@ -57,7 +56,7 @@
 			</div>
 
 			<!-- Middle Layer (Left / Right panels) -->
-			<div class="flex justify-between items-center flex-1">
+			<div class="flex justify-between items-start flex-1">
 				<!-- Left Sidebar: Metadata -->
 				<div class="font-mono text-sm space-y-8 pointer-events-auto max-w-[200px]">
 					<div class="border-l border-border pl-4">
@@ -82,41 +81,39 @@
 					</div>
 				</div>
 
-				<!-- Right Sidebar: Links / Extras -->
-				<div class="font-mono text-sm pointer-events-auto text-right max-w-[250px] space-y-6 flex flex-col items-end">
-					<div class="border border-border bg-surface p-2 px-4 text-xs text-secondary uppercase tracking-widest mb-4">
-						FILE: {project.id}
-					</div>
-
-					<div class="w-full text-right border-r border-border pr-4">
-						<h2 class="text-xs text-secondary uppercase mb-4">External Resources</h2>
-						{#if project.links.length > 0}
-							<div class="flex flex-col gap-3 items-end">
-								{#each project.links as link}
-									<a href={link.url} target="_blank" rel="noopener noreferrer" class="font-mono text-xs border border-border bg-surface px-3 py-2 hover:border-accent hover:text-accent transition-colors flex items-center justify-end group w-full max-w-[200px]">
-										<span class="mr-2">{link.label}</span>
-										<span class="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">-&gt;</span>
-									</a>
-								{/each}
-							</div>
-						{:else}
-							<div class="italic text-xs text-secondary">No telemetry.</div>
-						{/if}
-					</div>
-				</div>
 			</div>
 			
-			<div class="text-center font-mono text-xs text-secondary uppercase tracking-widest pb-4 animate-pulse">
+			<div class="text-center font-mono text-xs text-secondary uppercase tracking-widest pb-4 animate-pulse z-50">
 				Scroll for Overview \/
 			</div>
 		</div>
 	</div>
 
 	<!-- Scrollable Content Layer -->
-	<div class="relative z-20 max-w-2xl mx-auto px-8 pb-32 pt-24 bg-background/90 backdrop-blur-sm border-t border-border mt-[50vh]" id="content-container">
-		<div class="prose max-w-none prose-slate prose-invert prose-headings:uppercase prose-headings:font-bold prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline">
-			<h2 class="text-2xl font-bold uppercase tracking-tight mb-8 border-b border-border pb-4">System Overview</h2>
-			<p class="text-secondary leading-relaxed whitespace-pre-wrap text-lg">{project.description}</p>
+	<div class="relative z-20 max-w-4xl mx-auto px-8 pb-32 pt-24 bg-background/80 backdrop-blur-sm border border-border mt-[50vh]" id="content-container">
+		<div class="flex gap-12 items-start">
+			<!-- Description -->
+			<div class="flex-1 prose max-w-none prose-slate prose-invert prose-headings:uppercase prose-headings:font-bold prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline">
+				<h2 class="text-2xl font-bold uppercase tracking-tight mb-8 border-b border-border pb-4">Project Overview</h2>
+				<p class="text-secondary leading-relaxed whitespace-pre-wrap text-lg">{project.description}</p>
+			</div>
+
+			<!-- External Links -->
+			{#if project.links.length > 0}
+				<div class="shrink-0 w-48 font-mono">
+					<h2 class="text-xs text-secondary uppercase tracking-widest mb-4 border-b border-border pb-2">External Resources</h2>
+					<div class="flex flex-col gap-2">
+						{#each project.links as link}
+							{@const icon = link.type === 'github' ? '[<//>]' : link.type === 'linkedin' ? '[in]' : link.type === 'paper' ? '[doc]' : link.type === 'website' ? '[www]' : '[->]'}
+							<a href={link.url} target="_blank" rel="noopener noreferrer"
+								class="flex items-center gap-2 text-xs border border-border bg-surface px-3 py-2 hover:border-accent hover:text-accent transition-colors group">
+								<span class="text-accent/70 group-hover:text-accent shrink-0">{icon}</span>
+								<span class="truncate">{link.label}</span>
+							</a>
+						{/each}
+					</div>
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>

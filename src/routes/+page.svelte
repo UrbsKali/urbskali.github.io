@@ -24,7 +24,7 @@
 		</h1>
 
 		<p class="text-lg md:text-xl text-secondary max-w-xl leading-relaxed mb-16">
-			Hey, I'm Urbain, a Creative Technologist in the making ! I also am the President of DaVinciBot, the robotic club of ESILV engineering school. I have a passion for coding, robotics and creativity, and I love to combine these three passions in my projects. 
+			Hey, I'm Urbain, a Creative Technologist in the making ! I also am the President of DaVinciBot, the robotic club of ESILV engineering school. I have a passion for coding, robotics and creativity, and I love to combine those three in my projects. 
 		</p>
 
 		<div class="flex gap-6 font-mono text-sm">

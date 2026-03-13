@@ -3,22 +3,31 @@
 	import { OrbitControls, ContactShadows, HTML, interactivity, useGltf, useGltfAnimations } from '@threlte/extras';
 	import { cubicOut } from 'svelte/easing';
 	import { spring, Tween } from 'svelte/motion';
+	import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 	import { Box3, DoubleSide, Group, Mesh, ShaderMaterial, SRGBColorSpace, TextureLoader, Vector2, Vector3, type Object3D, type Texture } from 'three';
 	import type { ProjectHotspot } from '$lib/types';
 
 	// Enable Raycasting for hover events within Threlte
 	interactivity();
 
-	let { url, cursorPos = { x: 0, y: 0 }, xrayLensRadius = 120, hotspots = [], imageUrls = [] }: { 
+	let { url, cursorPos = { x: 0, y: 0 }, xrayLensRadius = 120, hotspots = [], imageUrls = [], loaded = $bindable(false) }: { 
 		url: string; 
 		cursorPos?: { x: number; y: number };
 		xrayLensRadius?: number;
 		hotspots?: ProjectHotspot[];
 		imageUrls?: string[];
+		loaded?: boolean;
 	} = $props();
 
+	const dracoLoader = new DRACOLoader();
+	dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
+
 	// Hook-based loading gives us full access to the logical 3D tree
-	const gltf = useGltf(url);
+	const gltf = useGltf(url, { dracoLoader });
+
+	$effect(() => {
+		loaded = !!$gltf;
+	});
 	const { actions, mixer } = useGltfAnimations(gltf);
 	const { renderer } = useThrelte();
 
@@ -28,38 +37,78 @@
 	const MODEL_SLIDE_DURATION = 380;
 	const MODEL_SLIDE_OFFSET = 1;
 
-	// X-ray lens shader — renders wireframe inside a circular screen-space region
+	// X-ray lens shader — uses gl_FragCoord to keep fragment math minimal.
 	const xrayVertexShader = `
-		varying vec4 vScreenPos;
 		void main() {
-			vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-			gl_Position = projectionMatrix * mvPosition;
-			vScreenPos = gl_Position;
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 		}
 	`;
 	const xrayFragmentShader = `
-		uniform vec2 uCursor;
-		uniform float uRadius;
-		uniform vec2 uResolution;
-		varying vec4 vScreenPos;
+		uniform vec2 uCursorPx;
+		uniform float uRadiusPx;
 		void main() {
-			// Convert clip space to screen pixels
-			vec2 ndc = vScreenPos.xy / vScreenPos.w;
-			vec2 screenPx = (ndc * 0.5 + 0.5) * uResolution;
-			vec2 cursorPx = uCursor * uResolution;
-			float dist = distance(screenPx, cursorPx);
-			if (dist > uRadius) discard;
-			// Fade at edge of lens
-			float alpha = 1.0 - smoothstep(uRadius * 0.7, uRadius, dist);
+			vec2 delta = gl_FragCoord.xy - uCursorPx;
+			float dist2 = dot(delta, delta);
+			float radius2 = uRadiusPx * uRadiusPx;
+			if (dist2 > radius2) discard;
+			float alpha = 1.0 - smoothstep(radius2 * 0.49, radius2, dist2);
 			gl_FragColor = vec4(0.992, 0.298, 0.18, alpha * 0.35);
 		}
 	`;
 
-	// Keep track of active xray materials so we can update uniforms each frame
-	let xrayMaterials: ShaderMaterial[] = [];
+	const lensViewportCss = new Vector2(1, 1);
+	const lensViewportBuffer = new Vector2(1, 1);
+	let lensPixelScale = 1;
+	const xrayUniforms = {
+		uCursorPx: { value: new Vector2(-10_000, -10_000) },
+		uRadiusPx: { value: 120 }
+	};
+	const sharedXrayMaterial = new ShaderMaterial({
+		vertexShader: xrayVertexShader,
+		fragmentShader: xrayFragmentShader,
+		wireframe: true,
+		transparent: true,
+		depthWrite: false,
+		uniforms: xrayUniforms
+	});
+	sharedXrayMaterial.toneMapped = false;
+
 	let xrayScene: Group | null = $state(null);
 	let imageTextures: Texture[] = $state([]);
+	let activeImageTextures: Texture[] = [];
+	let explodableMeshes: Mesh[] = [];
+	const explodeOffset = new Vector3();
 	const modelSlideCurrent = $derived(Math.abs(modelSlideX.current) < 0.0001 ? 0 : modelSlideX.current);
+
+	function updateLensViewport() {
+		if (!renderer) return;
+		renderer.getSize(lensViewportCss);
+		renderer.getDrawingBufferSize(lensViewportBuffer);
+
+		if (lensViewportCss.x <= 0 || lensViewportCss.y <= 0) {
+			lensViewportCss.set(1, 1);
+		}
+		if (lensViewportBuffer.x <= 0 || lensViewportBuffer.y <= 0) {
+			lensViewportBuffer.copy(lensViewportCss);
+		}
+
+		lensPixelScale = lensViewportBuffer.x / lensViewportCss.x;
+		if (!Number.isFinite(lensPixelScale) || lensPixelScale <= 0) {
+			lensPixelScale = 1;
+		}
+	}
+
+	function replaceImageTextures(nextTextures: Texture[]) {
+		for (const texture of activeImageTextures) {
+			texture.dispose();
+		}
+		activeImageTextures = nextTextures;
+		imageTextures = nextTextures;
+	}
+
+	function clearImageTextures() {
+		replaceImageTextures([]);
+	}
 
 	$effect(() => {
 		url;
@@ -89,7 +138,7 @@
 		const urls = imageUrls.filter((imageUrl) => imageUrl.length > 0);
 
 		if (urls.length === 0) {
-			imageTextures = [];
+			clearImageTextures();
 			return;
 		}
 
@@ -113,13 +162,19 @@
 			)
 		)
 			.then((textures) => {
-				if (cancelled) return;
-				imageTextures = textures;
+				if (cancelled) {
+					for (const texture of textures) {
+						texture.dispose();
+					}
+					return;
+				}
+
+				replaceImageTextures(textures);
 			})
 			.catch((err) => {
 				if (cancelled) return;
 				console.error('Failed to load project image textures:', err);
-				imageTextures = [];
+				clearImageTextures();
 			});
 
 		return () => {
@@ -129,107 +184,109 @@
 
 	// Modify scene topology whenever model or x-ray mode updates
 	$effect(() => {
-		if ($gltf) {
-			hasAnimations = $gltf.animations && $gltf.animations.length > 0;
+		const gltfData = $gltf;
+		if (!gltfData) {
+			explodableMeshes = [];
+			return;
+		}
 
-			// 0. Auto-Scale and Auto-Center
-			console.log("Original GLTF Scene:", $gltf.scene);
-		
-		// Reset any previous scale incase reactive triggers multiple times
-		$gltf.scene.scale.set(1, 1, 1);
-		$gltf.scene.position.set(0, 0, 0);
-		
-		$gltf.scene.updateMatrixWorld(true);
+		hasAnimations = gltfData.animations.length > 0;
 
-		const box = new Box3().setFromObject($gltf.scene);
+		// Reset any previous transforms before auto-fit.
+		gltfData.scene.scale.set(1, 1, 1);
+		gltfData.scene.position.set(0, 0, 0);
+		gltfData.scene.updateMatrixWorld(true);
+
+		const box = new Box3().setFromObject(gltfData.scene);
 		const size = new Vector3();
 		box.getSize(size);
 		const maxDim = Math.max(size.x, size.y, size.z);
-		
-		console.log("Bounding Box Size:", size);
-		console.log("Max Dimension:", maxDim);
-		
-		if (maxDim > 0 && maxDim !== Infinity) {
-			const targetSize = 4; // Normalize the model to exactly 4 units across
+
+		if (maxDim > 0 && Number.isFinite(maxDim)) {
+			const targetSize = 4;
 			const scaleFactor = targetSize / maxDim;
-			console.log("Scale Factor Applied:", scaleFactor);
-			$gltf.scene.scale.set(scaleFactor, scaleFactor, scaleFactor);
+			gltfData.scene.scale.set(scaleFactor, scaleFactor, scaleFactor);
 		}
 
-		$gltf.scene.updateMatrixWorld(true);
+		gltfData.scene.updateMatrixWorld(true);
 
-		// Recalculate physical bounds after scaling to perfectly center it
-		const scaledBox = new Box3().setFromObject($gltf.scene);
+		const scaledBox = new Box3().setFromObject(gltfData.scene);
 		const center = new Vector3();
 		scaledBox.getCenter(center);
-		console.log("Mathematical Center:", center);
-		
-		// Move its mathematical center to the origin point
-		$gltf.scene.position.set(-center.x, -center.y, -center.z);
+		gltfData.scene.position.set(-center.x, -center.y, -center.z);
+		gltfData.scene.updateMatrixWorld(true);
 
-		$gltf.scene.traverse((child: Object3D) => {
-			if ((child as Mesh).isMesh) {
-				const mesh = child as Mesh;
-				
-				// 1. Initial configuration block
-				if (!mesh.userData.origMat) {
-					// Store raw material
-					mesh.userData.origMat = mesh.material;
+		explodableMeshes = [];
+		const meshCenter = new Vector3();
+		gltfData.scene.traverse((child: Object3D) => {
+			if (!(child as Mesh).isMesh) return;
 
-					// Compute logical center of the mesh for physics interaction
-					if (!mesh.geometry.boundingBox) mesh.geometry.computeBoundingBox();
-					
-					if (mesh.geometry.boundingBox) {
-						const meshCenter = new Vector3();
-						mesh.geometry.boundingBox.getCenter(meshCenter);
-						meshCenter.applyMatrix4(mesh.matrixWorld);
-
-						mesh.userData.explodeDir = meshCenter.clone().normalize();
-					} else {
-						mesh.userData.explodeDir = new Vector3(0, 1, 0);
-					}
-					
-					// Fallback if mesh is perfectly centered at zero
-					if (mesh.userData.explodeDir.lengthSq() === 0) {
-						mesh.userData.explodeDir.set(0, 1, 0); 
-					}
-					mesh.userData.origPos = mesh.position.clone();
-				}
+			const mesh = child as Mesh;
+			if (!mesh.userData.origMat) {
+				mesh.userData.origMat = mesh.material;
 			}
+
+			if (!mesh.geometry.boundingBox) {
+				mesh.geometry.computeBoundingBox();
+			}
+
+			if (mesh.geometry.boundingBox) {
+				mesh.geometry.boundingBox.getCenter(meshCenter);
+				meshCenter.applyMatrix4(mesh.matrixWorld);
+				if (meshCenter.lengthSq() > 0) {
+					mesh.userData.explodeDir = meshCenter.clone().normalize();
+				} else {
+					mesh.userData.explodeDir = new Vector3(0, 1, 0);
+				}
+			} else {
+				mesh.userData.explodeDir = new Vector3(0, 1, 0);
+			}
+
+			mesh.userData.origPos = mesh.position.clone();
+			explodableMeshes.push(mesh);
 		});
-		}
 	});
 
 	$effect(() => {
 		const gltfData = $gltf;
 		
-		if (!gltfData) return;
+		if (!gltfData) {
+			xrayScene = null;
+			return;
+		}
 
 		// Clone the scene for the x-ray overlay (shares geometry buffers, lightweight)
 		const clone = gltfData.scene.clone(true);
-		xrayMaterials = [];
 		clone.traverse((child: Object3D) => {
 			if ((child as Mesh).isMesh) {
 				const mesh = child as Mesh;
 				// Disable raycasting on overlay meshes
 				mesh.raycast = () => {};
-				const mat = new ShaderMaterial({
-					vertexShader: xrayVertexShader,
-					fragmentShader: xrayFragmentShader,
-					wireframe: true,
-					transparent: true,
-					depthWrite: false,
-					uniforms: {
-						uCursor: { value: new Vector2(cursorPos.x, 1.0 - cursorPos.y) },
-						uRadius: { value: xrayLensRadius },
-						uResolution: { value: new Vector2(1, 1) }
-					}
-				});
-				mesh.material = mat;
-				xrayMaterials.push(mat);
+				mesh.material = sharedXrayMaterial;
 			}
 		});
 		xrayScene = clone;
+	});
+
+	$effect(() => {
+		if (!renderer || typeof window === 'undefined') return;
+
+		updateLensViewport();
+		const resizeObserver = new ResizeObserver(() => {
+			updateLensViewport();
+		});
+		resizeObserver.observe(renderer.domElement);
+
+		return () => {
+			resizeObserver.disconnect();
+		};
+	});
+
+	$effect(() => {
+		return () => {
+			clearImageTextures();
+			sharedXrayMaterial.dispose();
+		};
 	});
 
 	// Physics and state triggers
@@ -255,26 +312,24 @@
 	}
 
 	// Continuous event loop
-	useTask((delta) => {
-		// Update x-ray lens uniforms every frame to follow cursor
-		if (xrayMaterials.length > 0 && renderer) {
-			const size = renderer.getSize(new Vector2());
-			for (const mat of xrayMaterials) {
-				mat.uniforms.uCursor.value.set(cursorPos.x, 1.0 - cursorPos.y);
-				mat.uniforms.uRadius.value = xrayLensRadius;
-				mat.uniforms.uResolution.value.copy(size);
-			}
+	useTask(() => {
+		if (renderer) {
+			xrayUniforms.uCursorPx.value.set(cursorPos.x * lensViewportBuffer.x, (1.0 - cursorPos.y) * lensViewportBuffer.y);
+			xrayUniforms.uRadiusPx.value = xrayLensRadius * lensPixelScale;
 		}
 
-		if (!$gltf || hasAnimations) return;
+		if (!$gltf || hasAnimations || explodableMeshes.length === 0 || Math.abs($explodeSpring) < 0.0001) return;
 
-		// Move components iteratively according to physical spring
-		$gltf.scene.traverse((child: Object3D) => {
-			if ((child as Mesh).isMesh && child.userData.origPos && child.userData.explodeDir) {
-				const offset = child.userData.explodeDir.clone().multiplyScalar($explodeSpring * 1.5);
-				child.position.copy(child.userData.origPos).add(offset);
-			}
-		});
+		const springOffset = $explodeSpring * 1.5;
+
+		for (const mesh of explodableMeshes) {
+			const origPos = mesh.userData.origPos as Vector3 | undefined;
+			const explodeDir = mesh.userData.explodeDir as Vector3 | undefined;
+			if (!origPos || !explodeDir) continue;
+
+			explodeOffset.copy(explodeDir).multiplyScalar(springOffset);
+			mesh.position.copy(origPos).add(explodeOffset);
+		}
 	});
 
 	function getTextureAspect(texture: Texture) {
@@ -287,7 +342,7 @@
 <T.PerspectiveCamera makeDefault position={[5, 4, 5]} fov={40}>
 	<OrbitControls 
 		autoRotate 
-		autoRotateSpeed={0.5} 
+		autoRotateSpeed={0.5} 	
 		enablePan={false} 
 		enableDamping 
 		dampingFactor={0.05} 

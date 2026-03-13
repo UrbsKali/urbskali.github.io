@@ -11,7 +11,7 @@
 </svelte:head>
 
 <!-- Background engineering grid overlay -->
-<div class="fixed inset-0 pointer-events-none z-[-1] opacity-70" 
+<div class="fixed inset-0 pointer-events-none z-[-1] opacity-100" 
      style="background-image: radial-gradient(#E5E7EB 1px, transparent 1px); background-size: 24px 24px;">
 </div>
 

@@ -2,14 +2,22 @@
 	import { Canvas } from '@threlte/core';
 	import ModelScene from './ModelScene.svelte';
 	import ImageOnlyScene from './ImageOnlyScene.svelte';
-	import type { Project } from '$lib/types';
+	import type { Project, ProjectHotspot } from '$lib/types';
 	
 	let { project }: { project: Project } = $props();
 	
 	let cursorPos = $state({ x: 0, y: 0 });
 	let containerEl: HTMLDivElement | undefined = $state();
 	let xrayLensRadius = $state(60);
-	let activeModelIndex = $state(0);
+	let activeItemIndex = $state(0);
+	let modelLoaded = $state(false);
+	let isViewerHovered = $state(false);
+
+	$effect(() => {
+		// Reset loading state whenever the active model changes
+		activeDeckItem;
+		modelLoaded = false;
+	});
 	let deckHasEntered = $state(false);
 	let deckWheelLocked = $state(false);
 	const ROTARY_CARD_ANGLE_STEP = 5;
@@ -17,32 +25,56 @@
 	const ROTARY_CENTER_OFFSET = 500;
 	const ROTARY_RADIUS = 560;
 
+	type DeckItem =
+		| { kind: 'model'; url: string; modelIndex: number; label: string; itemIndex: number }
+		| { kind: 'image'; url: string; imageIndex: number; label: string; itemIndex: number };
+
 	const modelUrls = $derived.by(() => {
 		const multiModelUrls = project.models_3d?.filter((url) => url.length > 0) ?? [];
 		if (multiModelUrls.length > 0) return multiModelUrls;
 		return project.model_3d ? [project.model_3d] : [];
 	});
 
-	const hasImagePlanes = $derived((project.images?.length ?? 0) > 0);
-	const has3DContent = $derived(modelUrls.length > 0 || hasImagePlanes);
-	const activeModelUrl = $derived(modelUrls[activeModelIndex]);
+	const imageUrls = $derived((project.images ?? []).filter((url) => url.length > 0));
+
+	const deckItems = $derived.by((): DeckItem[] => {
+		const items: DeckItem[] = [];
+		modelUrls.forEach((url, i) => {
+			items.push({ kind: 'model', url, modelIndex: i, label: getModelLabel(url, i), itemIndex: items.length });
+		});
+		imageUrls.forEach((url, i) => {
+			items.push({ kind: 'image', url, imageIndex: i, label: getImageLabel(url, i), itemIndex: items.length });
+		});
+		return items;
+	});
+
+	const has3DContent = $derived(deckItems.length > 0);
+	const activeDeckItem = $derived(deckItems[activeItemIndex] ?? null);
+
+	const activeHotspots = $derived.by((): ProjectHotspot[] => {
+		if (!activeDeckItem || activeDeckItem.kind !== 'model') return [];
+		const mi = activeDeckItem.modelIndex;
+		if (project.hotspots_per_model) return project.hotspots_per_model[mi] ?? [];
+		return project.hotspots ?? [];
+	});
+
 	const deckRotation = $derived.by(() => {
-		const total = modelUrls.length;
-		if (total < 2) return 0;
-		return -ROTARY_CARD_ANGLE_STEP * activeModelIndex;
+		if (deckItems.length < 2) return 0;
+		return -ROTARY_CARD_ANGLE_STEP * activeItemIndex;
 	});
 
 	const rotaryDeck = $derived.by(() => {
-		const total = modelUrls.length;
-		if (total === 0) return [];
-		return modelUrls.map((url, modelIndex) => {
-			const angle = ROTARY_START_ANGLE + modelIndex * ROTARY_CARD_ANGLE_STEP;
+		return deckItems.map((item) => {
+			const angle = ROTARY_START_ANGLE + item.itemIndex * ROTARY_CARD_ANGLE_STEP;
 			const radians = (angle * Math.PI) / 180;
 			const x = Math.cos(radians) * ROTARY_RADIUS;
 			const y = Math.sin(radians) * ROTARY_RADIUS;
 			return {
-				modelIndex,
-				modelLabel: getModelLabel(url, modelIndex),
+				itemIndex: item.itemIndex,
+				kind: item.kind,
+				label: item.label,
+				typeLabel: item.kind === 'model' ? `MDL ${item.modelIndex + 1}` : `IMG ${item.imageIndex + 1}`,
+				channelLabel: item.kind === 'model' ? '3D View' : 'Image',
 				angle,
 				x,
 				y
@@ -50,10 +82,14 @@
 		});
 	});
 
+	const deckLabel = $derived.by(() => {
+		if (modelUrls.length > 0 && imageUrls.length > 0) return 'View Deck';
+		if (imageUrls.length > 1) return 'Image Deck';
+		return 'Model Deck';
+	});
+
 	$effect(() => {
-		if (activeModelIndex >= modelUrls.length) {
-			activeModelIndex = 0;
-		}
+		if (activeItemIndex >= deckItems.length) activeItemIndex = 0;
 	});
 
 	$effect(() => {
@@ -62,6 +98,19 @@
 			deckHasEntered = true;
 		});
 		return () => window.cancelAnimationFrame(rafId);
+	});
+
+	$effect(() => {
+		if (typeof window === 'undefined') return;
+		if (deckItems.length < 2) return;
+		if (isViewerHovered) return;
+
+		const intervalId = window.setInterval(() => {
+			if (document.visibilityState !== 'visible') return;
+			activeItemIndex = (activeItemIndex + 1) % deckItems.length;
+		}, 20000);
+
+		return () => window.clearInterval(intervalId);
 	});
 
 	function handleMouseMove(e: MouseEvent) {
@@ -73,23 +122,37 @@
 		};
 	}
 
-	function cycleModel(direction: 1 | -1) {
-		const total = modelUrls.length;
+	function handleViewerMouseEnter() {
+		isViewerHovered = true;
+	}
+
+	function handleViewerMouseLeave() {
+		isViewerHovered = false;
+	}
+
+	function cycleItem(direction: 1 | -1) {
+		const total = deckItems.length;
 		if (total < 2) return false;
-		const nextIndex = activeModelIndex + direction;
+		const nextIndex = activeItemIndex + direction;
 		if (nextIndex < 0 || nextIndex >= total) return false;
-		activeModelIndex = nextIndex;
+		activeItemIndex = nextIndex;
 		return true;
 	}
 
-	function setActiveModel(index: number) {
-		activeModelIndex = index;
+	function setActiveItem(index: number) {
+		activeItemIndex = index;
 	}
 
 	function getModelLabel(url: string, index: number) {
 		const fromPath = url.split('/').pop() ?? `model-${index + 1}`;
 		const normalized = fromPath.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ').trim();
 		return normalized.length > 0 ? normalized : `model ${index + 1}`;
+	}
+
+	function getImageLabel(url: string, index: number) {
+		const fromPath = url.split('/').pop() ?? `image-${index + 1}`;
+		const normalized = fromPath.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ').trim();
+		return normalized.length > 0 ? normalized : `image ${index + 1}`;
 	}
 
 	function getRotaryCardStyle(x: number, y: number, angle: number, isActiveCard: boolean) {
@@ -104,7 +167,7 @@
 		const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
 		if (delta === 0) return;
 		const direction: 1 | -1 = delta > 0 ? 1 : -1;
-		if (!cycleModel(direction)) return;
+		if (!cycleItem(direction)) return;
 		deckWheelLocked = true;
 		setTimeout(() => {
 			deckWheelLocked = false;
@@ -113,25 +176,29 @@
 </script>
 
 <div 
-	class="w-full h-[300px] md:h-[500px] border border-border bg-surface relative overflow-hidden group mb-12"
+	class="w-full h-full border border-border bg-surface relative overflow-hidden group mb-12"
 	role="img"
 	bind:this={containerEl}
 	onmousemove={handleMouseMove}
+	onmouseenter={handleViewerMouseEnter}
+	onmouseleave={handleViewerMouseLeave}
 >
 	{#if has3DContent}
 		<Canvas>
-			{#if activeModelUrl}
-				{#key activeModelUrl}
-					<ModelScene 
-						url={activeModelUrl} 
+			{#if activeDeckItem?.kind === 'model'}
+				{#key activeDeckItem.url}
+					<ModelScene
+						url={activeDeckItem.url}
 						cursorPos={cursorPos}
 						{xrayLensRadius}
-						hotspots={project.hotspots || []}
-						imageUrls={project.images || []}
+						hotspots={activeHotspots}
+						bind:loaded={modelLoaded}
 					/>
 				{/key}
-			{:else}
-				<ImageOnlyScene imageUrls={project.images || []} />
+			{:else if activeDeckItem?.kind === 'image'}
+				{#key activeDeckItem.url}
+					<ImageOnlyScene imageUrls={[activeDeckItem.url]} />
+				{/key}
 			{/if}
 		</Canvas>
 	{:else}
@@ -140,40 +207,50 @@
 		</div>
 	{/if}
 
+	<!-- Loading Bar -->
+	{#if !modelLoaded && activeDeckItem?.kind === 'model'}
+		<div class="absolute inset-0 z-50 pointer-events-none flex flex-col items-center justify-center gap-3">
+			<div class="font-mono text-[10px] uppercase tracking-[0.25em] text-accent animate-pulse">Loading Model</div>
+			<div class="w-48 h-px bg-border overflow-hidden">
+				<div class="loading-bar-track h-full bg-accent"></div>
+			</div>
+		</div>
+	{/if}
+
 	<!-- Technical Overlay for 3D Viewer -->
 	<div class="absolute top-4 left-4 font-mono text-[10px] text-secondary z-20 pointer-events-none uppercase tracking-widest bg-surface/80 p-1">
 		3D.VIEWER // {project.name}
-		{#if modelUrls.length > 1}
-			// MODEL {activeModelIndex + 1} / {modelUrls.length}
+		{#if deckItems.length > 1}
+			// {activeDeckItem?.kind === 'model' ? 'MDL' : 'IMG'} {activeItemIndex + 1} / {deckItems.length}
 		{/if}
 	</div>
 
-	{#if modelUrls.length > 1}
+	{#if deckItems.length > 1}
 		<div class="absolute right-0 top-1/2 z-40 hidden -translate-y-1/2 md:block">
 			<div
 				class={`rotary-deck-shell ${deckHasEntered ? 'rotary-deck-shell-entered' : ''}`}
 				onwheel={handleDeckWheel}
 			>
-				<div class="mb-2 font-mono text-[9px] text-secondary uppercase tracking-[0.2em]">Model Deck</div>
+				<!-- <div class="mb-2 font-mono text-[9px] text-secondary uppercase tracking-[0.2em]">{deckLabel}</div> -->
 				<div class="rotary-deck-track">
 					<div
 						class="rotary-deck-wheel"
 						style={`--wheel-rotation:${deckRotation}deg; --wheel-center-offset:${ROTARY_CENTER_OFFSET}px;`}
 					>
 						{#each rotaryDeck as deckCard}
-							{@const isActiveCard = deckCard.modelIndex === activeModelIndex}
+							{@const isActiveCard = deckCard.itemIndex === activeItemIndex}
 							{@const rotaryStyle = getRotaryCardStyle(deckCard.x, deckCard.y, deckCard.angle, isActiveCard)}
 							<button
 								type="button"
-								data-model-index={deckCard.modelIndex}
+								data-item-index={deckCard.itemIndex}
 								class={`rotary-deck-card text-left transition-all duration-300 ${
 									isActiveCard
 										? 'rotary-deck-card-active'
 										: 'rotary-deck-card-passive'
 								}`}
 								style={rotaryStyle.style}
-								onclick={() => setActiveModel(deckCard.modelIndex)}
-								aria-label={`Switch to ${deckCard.modelLabel}`}
+							onclick={() => setActiveItem(deckCard.itemIndex)}
+							aria-label={`Switch to ${deckCard.label}`}
 							>
 								<span class="rotary-card-corner rotary-card-corner-tl"></span>
 								<span class="rotary-card-corner rotary-card-corner-tr"></span>
@@ -181,15 +258,15 @@
 								<span class="rotary-card-corner rotary-card-corner-br"></span>
 								<div class="rotary-card-frame">
 									<div class="rotary-card-meta font-mono uppercase">
-										<span class="rotary-card-index">MDL {deckCard.modelIndex + 1}</span>
+										<span class="rotary-card-index">{deckCard.typeLabel}</span>
 										<span class={`rotary-card-state ${isActiveCard ? 'rotary-card-state-active' : ''}`}>
 											{isActiveCard ? 'Selected' : 'Queued'}
 										</span>
 									</div>
-									<div class="rotary-card-name">{deckCard.modelLabel}</div>
+									<div class="rotary-card-name">{deckCard.label}</div>
 									<div class="rotary-card-footer font-mono uppercase">
 										<span class="rotary-card-line"></span>
-										<span class="rotary-card-channel">3D View</span>
+										<span class="rotary-card-channel">{deckCard.channelLabel}</span>
 									</div>
 								</div>
 							</button>
@@ -202,7 +279,7 @@
 	
 	<div class="absolute bottom-4 right-4 font-mono text-[10px] text-primary z-20 pointer-events-none uppercase tracking-widest bg-accent/10 px-2 py-1 border border-accent/20">
 		<span class="inline-block w-2 h-2 bg-accent mr-1 animate-pulse"></span>
-		{#if activeModelUrl}
+		{#if activeDeckItem?.kind === 'model'}
 			Interactive (Drag & Hover)
 		{:else}
 			Interactive (Drag)
@@ -210,7 +287,7 @@
 	</div>
 
 	<!-- X-Ray Lens Cursor Indicator -->
-	{#if containerEl && activeModelUrl}
+	{#if containerEl && activeDeckItem?.kind === 'model'}
 		<div 
 			class="absolute rounded-full border border-accent/60 pointer-events-none z-30 mix-blend-screen"
 			style="
@@ -228,8 +305,8 @@
 	{/if}
 	
 	<!-- UI Guidelines -->
-	<div class="absolute top-0 bottom-0 left-[10%] z-20 border-l border-border/50 pointer-events-none border-dashed"></div>
-	<div class="absolute top-0 bottom-0 right-[10%] z-20 border-r border-border/50 pointer-events-none border-dashed"></div>
+	<div class="absolute top-0 bottom-0 left-[15%] z-20 border-l border-border/50 pointer-events-none border-dashed"></div>
+	<div class="absolute top-0 bottom-0 right-[15%] z-20 border-r border-border/50 pointer-events-none border-dashed"></div>
 
 	<!-- Crosshairs -->
 	<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 pointer-events-none z-20 opacity-20">
@@ -239,6 +316,16 @@
 </div>
 
 <style>
+	@keyframes loading-bar-sweep {
+		0% { transform: translateX(-100%); }
+		60% { transform: translateX(100%); }
+		100% { transform: translateX(100%); }
+	}
+
+	.loading-bar-track {
+		animation: loading-bar-sweep 1.4s ease-in-out infinite;
+	}
+
 	.rotary-deck-shell {
 		opacity: 0;
 		transform: translateX(26px);

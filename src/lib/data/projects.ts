@@ -10,20 +10,37 @@ export const projects: Project[] = [
 		domain: 'Electronics',
 		description: 'The dev board you will actually carry. A compact, high-performance microcontroller board designed for on-the-go prototyping & education',
 		skills_used: ['KiCAD', 'Industrial Design', 'Crowdfunding'],
-		images: [],
-		model_3d: '/assets/models/Handspinner.glb',
-		models_3d: ['/assets/models/Handspinner.glb', '/assets/models/smartlock.glb'],
-		hotspots: [
-			{
-				position: [0, 0.5, 0],
-				label: 'Ceramic Bearing Hub',
-				description: 'High-speed frictionless hybrid ceramic bearing for minimal drag.'
-			},
-			{
-				position: [1.2, -0.2, 0],
-				label: 'Titanium Weights',
-				description: 'Perimeter counterweights perfectly balanced for optimized centrifugal inertia.'
-			}
+		images: ['/assets/images/ESPIN/teasing.png'],
+		models_3d: ['/assets/models/Handspinner.glb'],
+		hotspots_per_model: [
+			[
+				{
+					position: [-1.25, -0.5, 0],
+					label: 'LiPo Battery',
+					description: 'Rechargeable battery providing up to 8 hours of continuous use, with USB-C charging and built-in protection circuitry.'
+				},
+				{
+					position: [1.5, -0.5, 0],
+					label: 'ESP32 C3 mini',
+					description: 'Low-power microcontroller with integrated Wi-Fi and Bluetooth connectivity, serving as the brain of the E-Spin board.'
+				},
+				{
+					position: [0.8, -0.6, 0],
+					label: 'IMU',
+					description: 'High precison 6 axis Inertial Mersurment Unit, capable of Wake on Motion and include a podometer'
+				},
+				{
+					position: [0.9, -0.45, 0.5],
+					label: 'GPIOs',
+					description: '12 General Purpose Input/Output pins for connecting sensors, actuators, and other peripherals, with support for I2C, SPI, ADC and PWM interfaces.'
+				},
+				{
+					position: [-1.1, -0.7, 0],
+					label: 'LED ribbon',
+					description: 'Fully addressable RGB LED strip with 8 LEDs, allowing for customizable lighting effects and visual feedback for your projects.'
+				}
+			],
+			[] // Smartlock model — hotspots defined in the dedicated smartlock project
 		],
 		links: [
 			{ type: 'github', label: 'Repository', url: 'https://github.com/UrbsKali/E-spin_board' },
@@ -76,7 +93,8 @@ export const projects: Project[] = [
 		domain: 'Electronics',
 		description: 'Designed and built a competitive robot for the Coupe de Robotique, a prestigious French robotics competition. Led a team of 12 students through the entire project lifecycle, from concept to competition.',
 		skills_used: ['C++', 'PCB Design', 'Solidworks', 'Management'],
-		images: [],
+		model_3d: '/assets/models/cdr2025.glb',
+		images: ['/assets/images/CDR/cdr25.jpg', '/assets/images/CDR/cdr24.webp', '/assets/images/CDR/equipe25.jpg'],
 		links: [
 			{ type: 'github', label: 'Repository', url: 'https://github.com/davincibot/CoupeDeRobotique' },
 			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' }
@@ -92,9 +110,27 @@ export const projects: Project[] = [
 		domain: 'Management',
 		description: 'Elected President of DaVinciBot, the robotics club of ESILV engineering school. Oversaw a team of 130+ members, organized workshops and events, and led the club to new heights in terms of project quality and member engagement.',
 		skills_used: ['Leadership', 'Growth Strategy', 'Stategic planning', 'Management'],
-		images: ['/assets/images/dvb.jpg'],
+		images: ['/assets/images/Pres/dvb.jpg'],
 		links: [
-			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' }
+			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' },
+			{ type: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com/company/davincibot' }
+
+		]
+	},
+	{
+		id: 'PRJ-25-11',
+		slug: 'drone-defense-hackathon',
+		name: 'Drone Defense Hackathon',
+		date: new Date('2025-11-10'),
+		year: 2025,
+		domain: 'Software',
+		description: 'Participated in the Drone Defense Hackathon, a 72-hour competition in the Grand Palais in Paris, where teams developed innovative solutions for drone utilisation by the French Army',
+		skills_used: ['LoRa', 'GNSS', 'Embedded Systems'],
+		images: ['/assets/images/DDH/ddh.jpg', '/assets/images/DDH/ddh1.jpg', '/assets/images/DDH/ddh2.jpg', '/assets/images/DDH/grandpalais.webp'],
+		links: [
+			{ type: 'website', label: 'Blog post', url: 'https://davincibot.fr/blog/davincibot-selectionne-pour-le-drone-defense-hackathon/' },
+			{ type: 'website', label: 'Annoncment', url: 'https://davincibot.fr/blog' },
+
 		]
 	},
 ];

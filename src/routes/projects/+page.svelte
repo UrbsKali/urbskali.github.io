@@ -9,7 +9,7 @@
 </script>
 
 <svelte:head>
-	<title>Project Database | Urbain Systems</title>
+	<title>Project Database | Urbain</title>
 </svelte:head>
 
 <div class="mb-16 pb-8 border-b border-border flex justify-between items-end gap-4 flex-wrap">
