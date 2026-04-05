@@ -7,10 +7,10 @@ export const projects: Project[] = [
 		name: 'E-Spin',
 		date: new Date('2026-03-26'),
 		year: 2026,
-		domain: 'Electronics',
+		domains: ['Electronics', 'Software'],
 		description: 'The dev board you will actually carry. A compact, high-performance microcontroller board designed for on-the-go prototyping & education',
 		skills_used: ['KiCAD', 'Industrial Design', 'Crowdfunding'],
-		images: ['/assets/images/ESPIN/teasing.png'],
+		images: ['/assets/images/ESPIN/Hero.png', '/assets/images/ESPIN/Exploded_details_big.png'],
 		models_3d: ['/assets/models/Handspinner.glb'],
 		hotspots_per_model: [
 			[
@@ -43,8 +43,9 @@ export const projects: Project[] = [
 			[] // Smartlock model — hotspots defined in the dedicated smartlock project
 		],
 		links: [
-			{ type: 'github', label: 'Repository', url: 'https://github.com/UrbsKali/E-spin_board' },
-			{ type: 'website', label: 'Website', url: 'https://espin.urbskali.fr' }
+			{ type: 'github', label: 'Repository', url: 'https://github.com/E-spin-fr' },
+			{ type: 'website', label: 'E-Spin Website', url: 'https://docs.e-spin.fr' },
+			{ type: 'website', label: 'Kickstarter Campaign', url: 'https://www.kickstarter.com/projects/322093471/e-spin?ref=1ty49a' }
 		]
 	},
 	{
@@ -53,7 +54,7 @@ export const projects: Project[] = [
 		name: 'Smart Lock',
 		date: new Date('2025-09-25'),
 		year: 2025,
-		domain: 'Electronics',
+		domains: ['Electronics', 'Software'],
 		description: 'A NFC and Bluetooth enabled smart lock designed to secure the locker of DaVinciBot, without the need for code, and working with the students card of our members. The lock is designed to be easily installable on any locker and provides a secure and convenient way for members to access their belongings.',
 		skills_used: ['KiCAD', 'Analog Design', 'Firmware Development'],
 		images: [],
@@ -90,7 +91,7 @@ export const projects: Project[] = [
 		name: 'French Robotic cup',
 		date: new Date('2025-05-15'),
 		year: 2025,
-		domain: 'Electronics',
+		domains: ['Electronics', 'Mechanical', 'Management'],
 		description: 'Designed and built a competitive robot for the Coupe de Robotique, a prestigious French robotics competition. Led a team of 12 students through the entire project lifecycle, from concept to competition.',
 		skills_used: ['C++', 'PCB Design', 'Solidworks', 'Management'],
 		model_3d: '/assets/models/cdr2025.glb',
@@ -107,9 +108,25 @@ export const projects: Project[] = [
 		name: 'President of DaVinciBot',
 		date: new Date('2025-02-20'),
 		year: 2025,
-		domain: 'Management',
+		domains: ['Management'],
 		description: 'Elected President of DaVinciBot, the robotics club of ESILV engineering school. Oversaw a team of 130+ members, organized workshops and events, and led the club to new heights in terms of project quality and member engagement.',
-		skills_used: ['Leadership', 'Growth Strategy', 'Stategic planning', 'Management'],
+		skills_used: ['Leadership', 'Growth Strategy', 'Stategic planning', 'Conflit Resolution'],
+		images: ['/assets/images/Pres/dvb.jpg'],
+		links: [
+			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' },
+			{ type: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com/company/davincibot' }
+
+		]
+	},
+	{
+		id: 'PRJ-24-02',
+		slug: 'treso-davincibot',
+		name: 'Treasurer of DaVinciBot',
+		date: new Date('2024-02-20'),
+		year: 2024,
+		domains: ['Management'],
+		description: 'Served as Treasurer of DaVinciBot, the robotics club of ESILV engineering school. Managed the club\'s finances, made budget forecasts, added compliance measures, and ensured transparent financial reporting.',
+		skills_used: ['Accounting', 'Excel', 'Financial Planning'],
 		images: ['/assets/images/Pres/dvb.jpg'],
 		links: [
 			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' },
@@ -123,14 +140,39 @@ export const projects: Project[] = [
 		name: 'Drone Defense Hackathon',
 		date: new Date('2025-11-10'),
 		year: 2025,
-		domain: 'Software',
-		description: 'Participated in the Drone Defense Hackathon, a 72-hour competition in the Grand Palais in Paris, where teams developed innovative solutions for drone utilisation by the French Army',
+		domains: ['Software', 'Electronics'],
+		description: `Participated in the Drone Defense Hackathon, a major European defense innovation event held at the Grand Palais in Paris, bringing together 200+ engineering students (selected from thousands) to design and prototype drone-based solutions for real-world military use cases.
+
+As President of DaVinciBot, I led the initiative end-to-end:
+
+- Recruited and structured a multidisciplinary team of engineers
+- Managed the application process and secured our team's selection among highly competitive candidates
+- Defined the technical direction and coordinated execution during the hackathon
+
+Over an intensive 48 hour cycle, we developed a functional prototype addressing drone communication and operational constraints in contested environments.
+
+A key contribution was the design and implementation of a real-time video transmission system using low-frequency RF, enabling more robust communication in environments where conventional links are unreliable. This component was engineered with reusability in mind and is now a foundation for future DaVinciBot projects.
+
+Beyond the technical deliverable, the experience involved:
+
+- Rapid prototyping and testing in a 1,000 m² live drone arena
+- Iterating under real-world constraints inspired by defense scenarios
+- Engaging with mentors, defense experts, and AI specialists to validate and challenge our approach
+
+Although the project did not reach the final stage, the technical feedback confirmed the relevance and scalability of our solution, particularly regarding resilient communication systems for drones.
+
+This experience strengthened my ability to:
+
+- Lead high-performing teams under pressure
+- Translate complex constraints into actionable engineering solutions
+- Build systems with both practical deployment considerations and long-term reuse in mind
+		`,
 		skills_used: ['LoRa', 'GNSS', 'Embedded Systems'],
 		images: ['/assets/images/DDH/ddh.jpg', '/assets/images/DDH/ddh1.jpg', '/assets/images/DDH/ddh2.jpg', '/assets/images/DDH/grandpalais.webp'],
 		links: [
 			{ type: 'website', label: 'Blog post', url: 'https://davincibot.fr/blog/davincibot-selectionne-pour-le-drone-defense-hackathon/' },
-			{ type: 'website', label: 'Annoncment', url: 'https://davincibot.fr/blog' },
-
+			{ type: 'website', label: 'Registration', url: 'https://www.agorize.com/en/challenges/drone-defense-hackathon' },
+			{ type: 'website', label: 'French Military blog post', url: 'https://www.defense.gouv.fr/terre/actualites/drone-defense-hackathon-collaboration-entre-larmee-jeunesse-ingenieure' }
 		]
 	},
 ];

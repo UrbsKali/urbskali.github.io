@@ -20,7 +20,7 @@
 </div>
 
 {#each domains as domain}
-	{@const domainProjects = projects.filter(p => p.domain === domain).sort((a, b) => b.year - a.year)}
+	{@const domainProjects = projects.filter(p => p.domains.includes(domain)).sort((a, b) => b.year - a.year)}
 	
 	{#if domainProjects.length > 0}
 		<section class="mb-24 relative">
@@ -34,7 +34,7 @@
 			
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-8">
 				{#each domainProjects as project}
-					<ProjectCard {project} />
+					<ProjectCard project={{ ...project, domains: [domain, ...project.domains.filter((d) => d !== domain)] }} />
 				{/each}
 			</div>
 		</section>

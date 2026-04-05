@@ -19,7 +19,7 @@ export interface Project {
 	name: string;
 	date: Date;               // Exact or start date for timeline sorting
 	year: number;             // Extracted from date for UI display
-	domain: ProjectDomain;
+	domains: ProjectDomain[];
 	description: string;      // Markdown or HTML string
 	skills_used: string[];    // Array of technical tags
 	images: string[];         // URLs to static assets

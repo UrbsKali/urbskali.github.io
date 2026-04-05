@@ -17,3 +17,74 @@
     @apply bg-background text-primary font-sans antialiased;
   }
 }
+
+/* 
+DESIGN LANGUAGE
+
+The visual language combines three inspirations:
+
+1. Minimalist tech startup landing pages
+   • large typography
+   • strong whitespace
+   • simple grid systems
+
+2. Engineering / CAD interface aesthetics
+   • thin line UI
+   • geometric shapes
+   • precise layout
+   • system labels
+
+3. Futuristic credential / access card design
+   • structured information blocks
+   • technical typography
+   • modular layouts
+
+The interface should feel like a **technical dashboard for projects** rather than a typical portfolio.
+
+The accent color should be used sparingly for:
+
+• hover states
+• highlights
+• active navigation
+• selected project indicators
+
+TYPOGRAPHY
+
+Primary UI font
+Inter
+
+Technical / system labels
+Space Mono
+
+Examples of technical UI labels:
+
+PROJECT ID
+DOMAIN
+YEAR
+STATUS
+SKILLS USED
+
+These labels should visually resemble engineering metadata.
+
+LAYOUT SYSTEM
+
+Use a **12 column grid**.
+
+Max width: 1280px.
+
+Spacing should follow an **8px rhythm system**.
+
+Whitespace should feel generous and deliberate.
+
+VISUAL ELEMENTS
+
+Use subtle technical overlays:
+
+• faint grid backgrounds
+• coordinate markers
+• UI alignment guides
+• small system labels
+
+These should appear lightly in the interface to reinforce the engineering aesthetic.
+
+*/

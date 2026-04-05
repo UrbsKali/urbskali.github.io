@@ -4,11 +4,12 @@
 	import ProjectCard from '$lib/components/project/ProjectCard.svelte';
 	import ProjectSelector3D from '$lib/components/3d/ProjectSelector3D.svelte';
 	
-	const featuredProjects = projects.slice(0, 3);
+	const featuredProject = projects[0];
+	const otherFeaturedProjects = projects.slice(1, 4);
 </script>
 
 <svelte:head>
-	<title>Urbain | Engineering Portfolio</title>
+	<title>Urbain | Portfolio</title>
 </svelte:head>
 
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-12 pb-32">
@@ -41,16 +42,22 @@
 	</section>
 </div>
 
-<!-- Sector Overview -->
+<!-- Recent Projects -->
 <section class="border-t border-border pt-24">
 	<div class="flex justify-between items-end mb-12">
 		<h2 class="text-2xl font-bold uppercase tracking-tight">Recent Projects</h2>
 		<a href="{base}/projects" class="font-mono text-xs text-secondary hover:text-accent transition-colors uppercase tracking-widest">View All Projects -></a>
 	</div>
 
-	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-		{#each featuredProjects as project}
+	<div class="grid grid-cols-1 gap-6 mb-12">
+
+		<div class="grid grid-cols-1 gap-6">
+			<ProjectCard project={featuredProject} featured={true} />
+		</div>
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			{#each otherFeaturedProjects as project}
 			<ProjectCard {project} />
-		{/each}
+			{/each}
+		</div>
 	</div>
 </section>
