@@ -142,9 +142,7 @@ I led the project end-to-end, from initial concept to final deployment, with sup
 				description: 'Low-power microcontroller with integrated Wi-Fi and Bluetooth connectivity, serving as the brain of the smart lock. '
 			}
 		],
-		links: [
-			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' }
-		]
+		links: [{ type: 'website', label: 'Website', url: 'https://davincibot.fr' }]
 	},
 	{
 		id: 'PRJ-25-04',
@@ -238,7 +236,6 @@ Designed logic for:
 		links: [
 			{ type: 'github', label: 'Repository', url: 'https://github.com/davincibot/CoupeDeRobotique' },
 			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' }
-
 		]
 	},
 	{
@@ -248,13 +245,13 @@ Designed logic for:
 		date: new Date('2025-02-20'),
 		year: 2025,
 		domains: ['Management'],
-		description: 'Elected President of DaVinciBot, the robotics club of ESILV engineering school. Oversaw a team of 130+ members, organized workshops and events, and led the club to new heights in terms of project quality and member engagement.',
+		description:
+			'Elected President of DaVinciBot, the robotics club of ESILV engineering school. Oversaw a team of 130+ members, organized workshops and events, and led the club to new heights in terms of project quality and member engagement.',
 		skills_used: ['Leadership', 'Growth Strategy', 'Stategic planning', 'Conflit Resolution'],
 		images: ['/assets/images/Pres/dvb.jpg'],
 		links: [
 			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' },
 			{ type: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com/company/davincibot' }
-
 		]
 	},
 	{
@@ -264,13 +261,51 @@ Designed logic for:
 		date: new Date('2024-02-20'),
 		year: 2024,
 		domains: ['Management'],
-		description: 'Served as Treasurer of DaVinciBot, the robotics club of ESILV engineering school. Managed the club\'s finances, made budget forecasts, added compliance measures, and ensured transparent financial reporting.',
+		description:
+			"Served as Treasurer of DaVinciBot, the robotics club of ESILV engineering school. Managed the club's finances, made budget forecasts, added compliance measures, and ensured transparent financial reporting.",
 		skills_used: ['Accounting', 'Excel', 'Financial Planning'],
 		images: ['/assets/images/Pres/dvb.jpg'],
 		links: [
 			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' },
 			{ type: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com/company/davincibot' }
+		]
+	},
+	{
+		id: 'PRJ-24-01',
+		slug: 'respo-module-emlv',
+		name: 'Module coordinator at EMLV',
+		date: new Date('2024-01-20'),
+		year: 2024,
+		domains: ['Other'],
+		description:
+			'Served as module coordinator for the "Technological development and innovation" module at EMLV, an Top 3 post-sixth-form Buisness School in France. Coordinated a team of 20+ teachers, designed the curriculum, and ensured the successful delivery of the module to 1,000+ students for two consecutive years.',
+		skills_used: ['Project Management', 'Curriculum Design', 'Team Coordination'],
+		images: ['/assets/images/EMLV/EMLV-1.jpg'],
+		links: [{ type: 'website', label: 'Website', url: 'https://emlv.fr' }]
+	},
+	{
+		id: 'PRJ-25-08',
+		slug: 'cohoma',
+		name: 'CoHoMa',
+		date: new Date('2025-08-20'),
+		year: 2025,
+		domains: ['Software'],
+		description: `CoHoMa focuses on collaboration between humans and machines.
 
+Each challenge demands a sustained pace, rapid threat identification, and the ability to explore low-visibility areas.
+
+## Our Approach
+
+Our response combines:
+
+- SLAM-based iSAM2, with sensors fusion navigation and advanced compression techniques for efficient information exchange over low-bandwidth links
+- Assisted navigation with a focus on intuitive human-machine interaction, enabling operators to maintain situational awareness without cognitive overload
+- An operator interface that guides decisions without overloading attention`,
+		skills_used: ['ROS2', 'Gazebo', 'C/C++', 'Python'],
+		images: ['/assets/images/COHOMA/cohoma.png'],
+		links: [
+			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' },
+			{ type: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com/company/davincibot' }
 		]
 	},
 	{
@@ -313,5 +348,5 @@ This experience strengthened my ability to:
 			{ type: 'website', label: 'Registration', url: 'https://www.agorize.com/en/challenges/drone-defense-hackathon' },
 			{ type: 'website', label: 'French Military blog post', url: 'https://www.defense.gouv.fr/terre/actualites/drone-defense-hackathon-collaboration-entre-larmee-jeunesse-ingenieure' }
 		]
-	},
+	}
 ];

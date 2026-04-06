@@ -5,7 +5,7 @@
 	
 	// Create grouped domains safely
 	// We want to loop over all domains explicitly:
-	const domains: ProjectDomain[] = ['Software', 'Electronics', 'Mechanical', 'Management'];
+	const domains: ProjectDomain[] = ['Software', 'Electronics', 'Mechanical', 'Management', 'Other'];
 </script>
 
 <svelte:head>

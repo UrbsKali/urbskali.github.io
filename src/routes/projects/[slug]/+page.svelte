@@ -28,7 +28,7 @@
 
 <div class="relative min-h-[200vh]">
 	<!-- Fixed Header Return Link -->
-	<div class="fixed top-16 2xl:left-45 ">
+	<div class="fixed top-16">
 		<a href="{base}/projects" class="font-mono text-xs text-secondary hover:text-accent transition-colors uppercase tracking-widest block"
 		   style="opacity: {uiOpacity}">
 			&lt;- Return to Registry

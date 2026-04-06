@@ -1,5 +1,5 @@
 // global type definitions for the project
-export type ProjectDomain = 'Software' | 'Electronics' | 'Mechanical' | 'Management';
+export type ProjectDomain = 'Software' | 'Electronics' | 'Mechanical' | 'Management' | 'Other';
 
 export interface ProjectLink {
 	type: 'github' | 'linkedin' | 'website' | 'paper' | 'other';
