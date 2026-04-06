@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { Canvas } from '@threlte/core';
 	import ModelScene from './ModelScene.svelte';
 	import ImageOnlyScene from './ImageOnlyScene.svelte';
@@ -29,13 +30,19 @@
 		| { kind: 'model'; url: string; modelIndex: number; label: string; itemIndex: number }
 		| { kind: 'image'; url: string; imageIndex: number; label: string; itemIndex: number };
 
+	function resolveAssetUrl(url: string) {
+		if (!url.startsWith('/')) return url;
+		return `${base}${url}`;
+	}
+
 	const modelUrls = $derived.by(() => {
-		const multiModelUrls = project.models_3d?.filter((url) => url.length > 0) ?? [];
+		const multiModelUrls =
+			project.models_3d?.filter((url) => url.length > 0).map((url) => resolveAssetUrl(url)) ?? [];
 		if (multiModelUrls.length > 0) return multiModelUrls;
-		return project.model_3d ? [project.model_3d] : [];
+		return project.model_3d ? [resolveAssetUrl(project.model_3d)] : [];
 	});
 
-	const imageUrls = $derived((project.images ?? []).filter((url) => url.length > 0));
+	const imageUrls = $derived((project.images ?? []).filter((url) => url.length > 0).map((url) => resolveAssetUrl(url)));
 
 	const deckItems = $derived.by((): DeckItem[] => {
 		const items: DeckItem[] = [];

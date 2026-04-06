@@ -4,8 +4,14 @@
 	export let project: Project;
 	export let featured = false;
 
+	function resolveAssetUrl(url: string) {
+		if (!url.startsWith('/')) return url;
+		return `${base}${url}`;
+	}
+
 	$: secondaryDomains = project.domains.slice(1);
 	$: needsImageBackdrop = /\.(png|webp|svg)(\?.*)?$/i.test(project.images[0] ?? '');
+	$: primaryImage = project.images[0] ? resolveAssetUrl(project.images[0]) : '';
 </script>
 
 <a href="{base}/projects/{project.slug}" class="block group relative bg-surface border border-border overflow-hidden hover:border-accent transition-colors duration-300 {featured ? 'md:grid md:grid-cols-12 md:items-stretch' : ''}" class:featured>
@@ -19,7 +25,7 @@
 	{#if project.images.length > 0}
 		<div class="relative w-full h-48 {featured ? 'md:col-span-8 md:h-auto md:min-h-104 md:border-r md:border-b-0 border-border' : ''} overflow-hidden border-b border-border {needsImageBackdrop ? 'bg-linear-to-br from-primary/5 via-surface to-accent/10' : 'bg-surface'}">
 			<img 
-				src={project.images[0]} 
+				src={primaryImage}
 				alt={project.name}
 				class="w-full h-full {featured ? 'object-cover md:object-cover' : 'group-hover:scale-105'} object-center object-cover transition-transform duration-300"
 				loading="lazy"

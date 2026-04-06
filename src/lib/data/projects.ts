@@ -8,7 +8,61 @@ export const projects: Project[] = [
 		date: new Date('2026-03-26'),
 		year: 2026,
 		domains: ['Electronics', 'Software'],
-		description: 'The dev board you will actually carry. A compact, high-performance microcontroller board designed for on-the-go prototyping & education',
+		description: `E-Spin rethinks how and where prototyping happens.
+
+Traditional development boards stay on desks. E-Spin is designed to stay with you.
+
+- ESP32-C3 microcontroller (WiFi + Bluetooth)
+- 12 exposed GPIO pins (I2C, power rails, etc.)
+- 8 addressable RGB LEDs
+- USB-C programming & charging
+- Onboard LiPo battery with battery management
+- Integrated 9 axis IMU
+- Dual-purpose PCB design with embedded reference guide
+- Fidget spinner form factor with 698ZZ bearing
+
+This enables rapid experimentation anywhere — from quick sensor tests to wireless prototypes — without needing a full lab setup.
+
+### What Makes It Different
+
+E-Spin is not a gadget pretending to be a dev board.
+It is a fully capable dev board that happens to be enjoyable to use.
+
+Always accessible → encourages spontaneous prototyping
+Physical interaction (spin, motion) → new input possibilities
+Embedded reference PCB → practical engineering aid
+Plug-and-play GPIO → immediate hardware integration
+
+The form factor is not cosmetic — it directly impacts usability and adoption.
+
+## My Role
+
+I led the electronics, product design, and technical execution of the project:
+
+#### Hardware & Embedded Systems
+- Designed the complete electronic architecture
+- Developed and iterated on PCB layouts (V1 → V3)
+- Selected components, validated, and integrated (ESP32-C3, power, LEDs, IMU)
+- Prototyped, debugged, and brought up the hardware
+#### Manufacturing & Production
+- Sourced components and manufacturing partners
+- Defined DFM (Design for Manufacturing) constraints
+- Set up assembly workflows and validation processes
+- Managed transition from hand-soldered prototypes → factory production
+#### Product & Creative Direction
+- Created 3D renders (Blender) and visual assets
+- Designed campaign visuals and UI elements (Figma)
+- Produced content for Kickstarter and social media
+- Structured and launched the crowdfunding campaign
+#### Collaboration
+Alexandre focused on mechanical design (form factor, tolerances) and project logistics (budgeting, forecasting)
+Close collaboration ensured tight integration between electronics and mechanical constraints
+### Results (Kickstarter Launch)
+- Funded in under 7.5 hours
+- 200% funded within 7 days
+- 59 backers / €2,037 pledged (week 1)
+- International demand across Europe and beyond
+- Featured by external platforms (e.g., Hackster.io)`,
 		skills_used: ['KiCAD', 'Industrial Design', 'Crowdfunding'],
 		images: ['/assets/images/ESPIN/Hero.png', '/assets/images/ESPIN/Exploded_details_big.png'],
 		models_3d: ['/assets/models/Handspinner.glb'],
@@ -55,7 +109,14 @@ export const projects: Project[] = [
 		date: new Date('2025-09-25'),
 		year: 2025,
 		domains: ['Electronics', 'Software'],
-		description: 'A NFC and Bluetooth enabled smart lock designed to secure the locker of DaVinciBot, without the need for code, and working with the students card of our members. The lock is designed to be easily installable on any locker and provides a secure and convenient way for members to access their belongings.',
+		description: `A NFC and Bluetooth enabled smart lock designed to secure the locker of DaVinciBot, without the need for code, and working with the students card of our members. The lock is designed to be easily installable on any locker and provides a secure and convenient way for members to access their belongings.
+
+## My Role		
+I led the project end-to-end, from initial concept to final deployment, with support at the end for the mechanical design and integration, in order to teach the new members of DaVinciBot the process of designing and building a complete hardware product:
+- Hardware design and prototyping (KiCAD)
+- Firmware development (C++ on ESP32-C3)
+- Mechanical integration and 3D modeling (SOLIDWORKS for CAD, Blender for 3D rendering)
+- Testing, iteration, and deployment in the locker room`,
 		skills_used: ['KiCAD', 'Analog Design', 'Firmware Development'],
 		images: [],
 		model_3d: '/assets/models/smartlock.glb',
@@ -92,7 +153,85 @@ export const projects: Project[] = [
 		date: new Date('2025-05-15'),
 		year: 2025,
 		domains: ['Electronics', 'Mechanical', 'Management'],
-		description: 'Designed and built a competitive robot for the Coupe de Robotique, a prestigious French robotics competition. Led a team of 12 students through the entire project lifecycle, from concept to competition.',
+		description: `Designed and developed a fleet of autonomous robots for a european robotics competition involving 100+ teams and real-time matches.
+Led a 12-member multidisciplinary team while contributing to embedded systems, communication architecture, and decision-making algorithms.
+
+### Problem & Objectives
+
+The French Robotic Cup is a yearly engineering competition where fully autonomous robots compete in 100-second matches under strict constraints (no remote control, dynamic environment, evolving rules each year).
+
+Key challenges:
+
+- Build a fully custom autonomous system (LiDAR, decision-making, actuation)
+- Ensure robust communication in a highly noisy environment (100+ robots operating simultaneously, whether on the match or the padocks)
+- Coordinate multiple robots acting as a system, not individually
+- Deliver a competition-ready robot before deadline, enabling full system testing
+
+Objective:
+Develop a reliable, competitive robotic system capable of executing a full match strategy autonomously and consistently.
+
+### My Contributions
+
+#### Technical (Embedded & Systems):
+
+- Designed a custom inter-board communication protocol (“Intercom”)
+- Implemented parts of the robot position control system (closed-loop control)
+- Contributed to decision-making algorithms governing robot behavior during matches
+- Developed low-frequency wireless communication (LoRa, ~400 MHz) for multi-robot coordination
+- Programmed autonomous robots in C/C++ on custom ESP32-S3 PCBs
+
+#### System Architecture:
+
+- Designed communication enabling coordinated multi-robot strategies
+- Ensured robustness against RF interference in a congested competition environment
+
+#### Project Management:
+
+- Led a team of 12 students, all of them more experienced/older
+- Structured the project lifecycle around Agile-based principles
+- Drove team motivation and alignment toward a shared competitive goal
+- Enforced early delivery milestones to enable earlier software integration
+
+### Approach & Technical Work
+
+The project involved building:
+
+- A main autonomous robot
+- Several secondary robots
+- A communication system allowing them to work together as a coordinated fleet
+
+The goal was not just to build robots, but to make them collaborate intelligently in real time.
+
+### Technical Breakdown
+
+#### Embedded Systems & Control
+
+Microcontrollers: ESP32-S3 (custom PCB)
+Languages: C / C++
+Implemented position control (closed-loop control):
+Sensor feedback → error computation → motor correction
+Ensures precise movement under dynamic conditions
+
+#### Communication Architecture
+
+- Designed a custom protocol (Intercom) for inter-board communication, in Python and C++
+- Implemented LoRa-based communication (~400 MHz):
+	+ Lower frequency → better penetration and reduced interference
+	+ Critical in an environment with dozens of competing RF systems
+
+#### Multi-Robot Coordination
+
+Distributed architecture:
+- Each robot operates autonomously
+- Shared information (LiDAR data) enables coordinated actions and improves situational awareness and pathplanning
+- Enabled task distribution and synchronization across robots
+
+#### Decision-Making System
+
+Designed logic for:
+- Action prioritization
+- Match strategy execution
+- Real-time adaptation to the opponent during the 100-second match`,
 		skills_used: ['C++', 'PCB Design', 'Solidworks', 'Management'],
 		model_3d: '/assets/models/cdr2025.glb',
 		images: ['/assets/images/CDR/cdr25.jpg', '/assets/images/CDR/cdr24.webp', '/assets/images/CDR/equipe25.jpg'],
