@@ -1,106 +1,141 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { scale } from 'svelte/transition';
 	import type { ExperienceIcon } from '$lib/data/experiences';
 
-	let {
-		activeIcon,
-		prefersReducedMotion
-	}: {
-		activeIcon: ExperienceIcon;
-		prefersReducedMotion: boolean;
-	} = $props();
+	let { activeIcon }: { activeIcon: ExperienceIcon } = $props();
 
-	const icons = ['leadership', 'education', 'engineering'] as const;
+	const groupPixels = [
+			'000010000',
+			'000111000',
+			'000111000',
+			'010111010',
+			'011111110',
+			'111111111',
+			'111111111',
+			'011111110',
+			'001111100'
+		];
+	const bookPixels = [
+			'000000000',
+			'011000110',
+			'010100010',
+			'010100010',
+			'010111010',
+			'010100010',
+			'010100010',
+			'011000110',
+			'000000000'
+		];
+	const chipPixels = [
+			'000010000',
+			'000010000',
+			'001111100',
+			'011000110',
+			'111000111',
+			'011000110',
+			'001111100',
+			'000010000',
+			'000010000'
+		];
+	const crownPixels = [
+		'000010000',
+		'010101010',
+		'011111110',
+		'111111111',
+		'011111110',
+		'001111100',
+		'001111100',
+		'011111110',
+		'000000000'
+	];
+	const robotPixels = [
+		'000010000',
+		'001111100',
+		'011111110',
+		'010101010',
+		'011111110',
+		'001111100',
+		'011111110',
+		'010000010',
+		'011111110'
+	];
+	const iconPixels: Record<ExperienceIcon, string[]> = {
+		leadership: groupPixels,
+		education: bookPixels,
+		engineering: chipPixels,
+		crown: crownPixels,
+		book: bookPixels,
+		robot: robotPixels
+	};
+
+	let dotVisual: HTMLDivElement;
+	let prefersReducedMotion = $state(false);
+	let dotGrid = $state({ x: 0, y: 0, size: 24, grayRadius: 1.5, radius: 3.5 });
+
+	onMount(() => {
+		const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+		const updateMotionPreference = () => (prefersReducedMotion = motionPreference.matches);
+		updateMotionPreference();
+		motionPreference.addEventListener('change', updateMotionPreference);
+
+		const updateGridAlignment = () => {
+			const bounds = dotVisual.getBoundingClientRect();
+			const styles = getComputedStyle(dotVisual);
+			const size = Number.parseFloat(styles.getPropertyValue('--dot-grid-size')) || 24;
+			const grayRadius = Number.parseFloat(styles.getPropertyValue('--dot-grid-radius')) || 1.5;
+			const radius = grayRadius + 2;
+			const layerLeft = bounds.left + (bounds.width - 256) / 2;
+			const layerTop = bounds.top + (bounds.height - 256) / 2;
+			const phaseX = ((size / 2 - (layerLeft % size)) % size + size) % size;
+			const phaseY = ((size / 2 - (layerTop % size)) % size + size) % size;
+
+			dotGrid = {
+				x: phaseX + (Math.round((128 - phaseX) / size) - 4) * size,
+				y: phaseY + (Math.round((128 - phaseY) / size) - 4) * size,
+				size,
+				grayRadius,
+				radius
+			};
+		};
+
+		updateGridAlignment();
+		window.addEventListener('resize', updateGridAlignment);
+		window.addEventListener('scroll', updateGridAlignment, { passive: true });
+
+		return () => {
+			motionPreference.removeEventListener('change', updateMotionPreference);
+			window.removeEventListener('resize', updateGridAlignment);
+			window.removeEventListener('scroll', updateGridAlignment);
+		};
+	});
 </script>
 
-<div class="dot-visual" aria-hidden="true">
-	<svg class="mask-definitions" width="0" height="0" aria-hidden="true">
-		<defs>
-			<mask id="leadership-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="256" height="256">
-				<rect width="256" height="256" fill="black" />
-				<g
-					transform="scale(2)"
-					fill="none"
-					stroke="white"
-					stroke-width="10"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<circle cx="64" cy="39" r="13" />
-					<circle cx="31" cy="48" r="9" />
-					<circle cx="97" cy="48" r="9" />
-					<path d="M39 93c0-15 11-27 25-27s25 12 25 27v8H39v-8Z" />
-					<path d="M15 94c0-12 7-21 17-22m81 22c0-12-7-21-17-22M48 108h32" />
-				</g>
-			</mask>
-			<mask id="education-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="256" height="256">
-				<rect width="256" height="256" fill="black" />
-				<g
-					transform="scale(2)"
-					fill="none"
-					stroke="white"
-					stroke-width="10"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<path d="M17 29c18-6 33-3 47 7v72c-14-10-29-13-47-7V29Z" />
-					<path d="M111 29c-18-6-33-3-47 7v72c14-10 29-13 47-7V29Z" />
-					<path d="M29 46c8-1 15 0 22 4m-22 10c8-1 15 0 22 4m26-14c7-4 14-5 22-4M77 64c7-4 14-5 22-4" />
-				</g>
-			</mask>
-			<mask id="engineering-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="256" height="256">
-				<rect width="256" height="256" fill="black" />
-				<g
-					transform="scale(2)"
-					fill="none"
-					stroke="white"
-					stroke-width="10"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<rect x="37" y="37" width="54" height="54" rx="5" />
-					<rect x="51" y="51" width="26" height="26" rx="2" />
-					<path d="M48 24v13m16-13v13m16-13v13M48 91v13m16-13v13m16-13v13M24 48h13m-13 16h13m-13 16h13m54-32h13m-13 16h13m-13 16h13" />
-					<path d="m58 64 5 5 9-11" />
-				</g>
-			</mask>
-		</defs>
-	</svg>
-
-	{#each icons as icon}
-		<div
+<div class="dot-visual" bind:this={dotVisual} aria-hidden="true">
+	{#key activeIcon}
+		<svg
 			class="dot-layer"
-			class:still={prefersReducedMotion}
-			style:mask-image={`url(#${icon}-mask)`}
-			style:--layer-opacity={activeIcon === icon ? 1 : 0}
-		></div>
-	{/each}
-
-	<svg class="icon-outline" viewBox="0 0 256 256" fill="none" aria-hidden="true">
-		<g
-			transform="scale(2)"
-			stroke="currentColor"
-			stroke-width="4"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			viewBox="0 0 256 256"
+			width="256"
+			height="256"
 		>
-			{#if activeIcon === 'leadership'}
-				<circle cx="64" cy="39" r="13" />
-				<circle cx="31" cy="48" r="9" />
-				<circle cx="97" cy="48" r="9" />
-				<path d="M39 93c0-15 11-27 25-27s25 12 25 27v8H39v-8Z" />
-				<path d="M15 94c0-12 7-21 17-22m81 22c0-12-7-21-17-22M48 108h32" />
-			{:else if activeIcon === 'education'}
-				<path d="M17 29c18-6 33-3 47 7v72c-14-10-29-13-47-7V29Z" />
-				<path d="M111 29c-18-6-33-3-47 7v72c14-10 29-13 47-7V29Z" />
-				<path d="M29 46c8-1 15 0 22 4m-22 10c8-1 15 0 22 4m26-14c7-4 14-5 22-4M77 64c7-4 14-5 22-4" />
-			{:else}
-				<rect x="37" y="37" width="54" height="54" rx="5" />
-				<rect x="51" y="51" width="26" height="26" rx="2" />
-				<path d="M48 24v13m16-13v13m16-13v13M48 91v13m16-13v13m16-13v13M24 48h13m-13 16h13m-13 16h13m54-32h13m-13 16h13m-13 16h13" />
-				<path d="m58 64 5 5 9-11" />
-			{/if}
-		</g>
-	</svg>
+			{#each iconPixels[activeIcon] as row, rowIndex}
+				{#each [...row] as pixel, columnIndex}
+					{#if pixel === '1'}
+						<circle
+							cx={dotGrid.x + columnIndex * dotGrid.size}
+							cy={dotGrid.y + rowIndex * dotGrid.size}
+							r={dotGrid.radius}
+							fill="var(--color-accent)"
+							in:scale={{ start: dotGrid.grayRadius / dotGrid.radius, duration: prefersReducedMotion ? 0 : 220 }}
+							out:scale={{ start: dotGrid.grayRadius / dotGrid.radius, duration: prefersReducedMotion ? 0 : 180 }}
+						/>
+					{/if}
+				{/each}
+			{/each}
+		</svg>
+	{/key}
+
 </div>
 
 <style>
@@ -122,62 +157,17 @@
 		pointer-events: none;
 	}
 
-	.icon-outline {
-		position: absolute;
-		top: calc(50% - 128px);
-		left: calc(50% - 128px);
-		z-index: 1;
-		width: 256px;
-		color: var(--color-accent);
-		opacity: 1;
-		pointer-events: none;
-	}
-
-	.mask-definitions {
-		position: absolute;
-		overflow: hidden;
-	}
-
 	.dot-layer {
 		position: absolute;
 		top: calc(50% - 128px);
 		left: calc(50% - 128px);
 		width: 256px;
 		aspect-ratio: 1;
-		background-image:
-			radial-gradient(var(--color-accent) var(--dot-grid-radius), transparent calc(var(--dot-grid-radius) + 0.1px)),
-			linear-gradient(to right, color-mix(in srgb, var(--color-accent) 34%, transparent) 1px, transparent 1px),
-			linear-gradient(to bottom, color-mix(in srgb, var(--color-accent) 34%, transparent) 1px, transparent 1px);
-		background-attachment: fixed;
-		background-position: 0 0;
-		background-size: var(--dot-grid-size) var(--dot-grid-size);
-		opacity: var(--layer-opacity);
-		mask-mode: luminance;
-		mask-position: center 0;
-		mask-repeat: no-repeat;
-		mask-size: 100% 100%;
-		animation: mask-wave 4.8s ease-in-out infinite;
-		transition: opacity 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
+		overflow: visible;
 	}
 
-	.dot-layer.still {
-		animation: none;
-	}
-
-	@keyframes mask-wave {
-		0%,
-		100% {
-			mask-position: center 0;
-		}
-		50% {
-			mask-position: center 2px;
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.dot-layer {
-			animation: none;
-			transition: none;
-		}
+	.dot-layer circle {
+		transform-box: fill-box;
+		transform-origin: center;
 	}
 </style>

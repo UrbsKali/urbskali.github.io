@@ -271,7 +271,8 @@ Designed logic for:
 		id: 'PRJ-24-01',
 		slug: 'respo-module-emlv',
 		name: 'Module coordinator at EMLV',
-		start_date: new Date('2024-01-20'),
+		start_date: new Date('2023-09-01'),
+		end_date: new Date('2025-09-01'),
 		domains: ['Other'],
 		description:
 			'Served as module coordinator for the "Technological development and innovation" module at EMLV, an Top 3 post-sixth-form Buisness School in France. Coordinated a team of 20+ teachers, designed the curriculum, and ensured the successful delivery of the module to 1,000+ students for two consecutive years.',
