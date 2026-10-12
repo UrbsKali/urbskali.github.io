@@ -20,7 +20,7 @@
 </div>
 
 {#each domains as domain}
-	{@const domainProjects = projects.filter(p => p.domains.includes(domain)).sort((a, b) => b.year - a.year)}
+		{@const domainProjects = projects.filter(p => p.domains.includes(domain)).sort((a, b) => b.start_date.getTime() - a.start_date.getTime())}
 	
 	{#if domainProjects.length > 0}
 		<section class="mb-24 relative">

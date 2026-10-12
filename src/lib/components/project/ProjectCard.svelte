@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { base } from '$app/paths';
+	import { formatProjectDateRange } from '$lib/utils/projectDates';
 	import type { Project } from '$lib/types';
 	export let project: Project;
 	export let featured = false;
@@ -10,6 +11,7 @@
 	}
 
 	$: secondaryDomains = project.domains.slice(1);
+	$: projectDateRange = formatProjectDateRange(project);
 	$: needsImageBackdrop = /\.(png|webp|svg)(\?.*)?$/i.test(project.images[0] ?? '');
 	$: primaryImage = project.images[0] ? resolveAssetUrl(project.images[0]) : '';
 </script>
@@ -63,6 +65,7 @@
 		</div>
 		
 		<h3 class="text-xl {featured ? 'md:text-3xl' : ''} font-bold mb-2 tracking-tight group-hover:text-accent transition-colors">{project.name}</h3>
+		<p class="font-mono text-xs text-secondary mb-3">{projectDateRange}</p>
 		{#if project.domains.length > 1 && secondaryDomains.length > 0}
 			<p class="font-mono text-[10px] text-secondary uppercase tracking-[0.18em] mb-3">
 				Also listed in: {secondaryDomains.join(' / ')}

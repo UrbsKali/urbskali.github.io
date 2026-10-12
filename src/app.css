@@ -12,6 +12,24 @@
   --font-mono: 'Space Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
+:root {
+  --dot-grid-size: 24px;
+  --dot-grid-radius: 1.5px;
+  --dot-grid-color: #e5e5e5;
+}
+
+.site-dot-grid {
+  background-image: radial-gradient(var(--dot-grid-color) var(--dot-grid-radius), transparent calc(var(--dot-grid-radius) + 0.1px));
+  background-size: var(--dot-grid-size) var(--dot-grid-size);
+}
+
+.home-hero-atmosphere {
+  position: relative;
+  isolation: isolate;
+}
+
+
+
 @layer base {
   body {
     @apply bg-background text-primary font-sans antialiased;
@@ -60,7 +78,7 @@ Examples of technical UI labels:
 
 PROJECT ID
 DOMAIN
-YEAR
+DATE
 STATUS
 SKILLS USED
 

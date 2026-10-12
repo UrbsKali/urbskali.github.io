@@ -1,9 +1,37 @@
 <script lang="ts">
 	import { base } from '$app/paths';
+	import { onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
 	import { projects } from '$lib/data/projects';
+	import { experiences } from '$lib/data/experiences';
+	import ExperienceDotGrid from '$lib/components/ExperienceDotGrid.svelte';
 	import ProjectCard from '$lib/components/project/ProjectCard.svelte';
-	import ProjectSelector3D from '$lib/components/3d/ProjectSelector3D.svelte';
-	
+
+	const featuredExperiences = experiences.map((experience) => {
+		const project = projects.find(({ slug }) => slug === experience.slug);
+		if (!project) throw new Error(`Missing homepage experience: ${experience.slug}`);
+		return { ...experience, project };
+	});
+
+	let activeExperienceIndex = $state(0);
+	let activeExperience = $derived(featuredExperiences[activeExperienceIndex]);
+	let prefersReducedMotion = $state(false);
+
+	function showExperience(index: number) {
+		activeExperienceIndex = (index + featuredExperiences.length) % featuredExperiences.length;
+	}
+
+	onMount(() => {
+		prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		if (prefersReducedMotion) return;
+
+		const interval = window.setInterval(() => {
+			showExperience(activeExperienceIndex + 1);
+		}, 5200);
+
+		return () => window.clearInterval(interval);
+	});
+
 	const featuredProject = projects[0];
 	const otherFeaturedProjects = projects.slice(1, 4);
 </script>
@@ -12,33 +40,52 @@
 	<title>Urbain | Portfolio</title>
 </svelte:head>
 
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-12 pb-32">
-	<section class="lg:col-span-7">
-		<div class="font-mono text-sm text-secondary tracking-widest uppercase mb-12 flex items-center gap-4">
-			Current Status: employable
-			<span class="w-12 h-px bg-border block"></span>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center pt-12 pb-28 lg:pt-20 lg:pb-36">
+	<section class="lg:col-span-7" aria-label="Introduction">
+		<div class="font-mono text-xs md:text-sm text-secondary tracking-widest uppercase mb-8 flex items-center gap-4">
+			Creative technologist // Paris, France
 		</div>
 
-		<h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 text-primary uppercase">
-			Engineering code, <br class="hidden md:block"/>
-			<span class="text-accent">Creativity and robots.</span>
+		<h1 class="text-5xl md:text-6xl xl:text-7xl font-bold leading-[1.04] tracking-tight mb-8 text-primary uppercase">
+			<span class="block">Hello, I'm Urbain.</span>
+			<span class="relative block min-h-[3.2em] overflow-hidden text-4xl text-accent sm:text-5xl md:text-6xl xl:text-7xl" aria-live="off">
+				{#key activeExperience.slug}
+					<span class="absolute inset-x-0 top-0 block" in:fly={{ y: prefersReducedMotion ? 0 : 36, duration: prefersReducedMotion ? 0 : 450 }}>
+						{activeExperience.role}
+					</span>
+				{/key}
+			</span>
 		</h1>
 
-		<p class="text-lg md:text-xl text-secondary max-w-xl leading-relaxed mb-16">
-			Hey, I'm Urbain, a Creative Technologist in the making ! I also am the President of DaVinciBot, the robotic club of ESILV engineering school. I have a passion for coding, robotics and creativity, and I love to combine those three in my projects. 
+		<p class="text-base md:text-lg text-secondary max-w-xl leading-relaxed mb-9">
+			From building robotics systems to leading 130+ members and coordinating a 1,000-student module, I bring ideas to life across code, hardware, and teams.
 		</p>
 
-		<div class="flex gap-6 font-mono text-sm">
-			<a href="{base}/projects" class="bg-primary text-surface px-6 py-4 hover:bg-accent transition-colors uppercase tracking-wider border border-primary">
-				Explore Projects
-				<span class="ml-2 opacity-100">-&gt;</span>
+		<div class="flex flex-wrap items-center gap-x-6 gap-y-4 font-mono text-xs md:text-sm">
+			<a href="{base}/projects/{activeExperience.project.slug}" class="inline-flex items-center bg-primary text-surface px-5 py-4 hover:bg-accent transition-colors uppercase tracking-wider border border-primary">
+				Explore this experience
+				<span class="ml-3" aria-hidden="true">-&gt;</span>
 			</a>
+			<div class="flex items-center gap-2" aria-label="Choose an experience">
+					{#each featuredExperiences as experience, index}
+					<button
+						type="button"
+						class="h-10 min-w-10 border px-3 transition-colors {index === activeExperienceIndex ? 'border-accent text-accent' : 'border-border text-secondary hover:border-primary hover:text-primary'}"
+						aria-label="Show {experience.project.name} experience"
+						aria-pressed={index === activeExperienceIndex}
+						onclick={() => showExperience(index)}
+					>
+						0{index + 1}
+					</button>
+				{/each}
+			</div>
 		</div>
 	</section>
 
-	<!-- 3D Interactive Selector Area -->
-	<section class="lg:col-span-5 hidden md:block">
-		<ProjectSelector3D />
+	<section class="lg:col-span-5" aria-label="Selected experience visual">
+		<div class="relative min-h-75 lg:min-h-90">
+			<ExperienceDotGrid activeIcon={activeExperience.icon} />
+		</div>
 	</section>
 </div>
 

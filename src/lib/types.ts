@@ -17,8 +17,9 @@ export interface Project {
 	id: string;               // e.g., 'PRJ-24-01'
 	slug: string;             // URL friendly identifier
 	name: string;
-	date: Date;               // Exact or start date for timeline sorting
-	year: number;             // Extracted from date for UI display
+	start_date: Date;
+	end_date?: Date | null;
+	experience_slugs?: string[];
 	domains: ProjectDomain[];
 	description: string;      // Markdown or HTML string
 	skills_used: string[];    // Array of technical tags

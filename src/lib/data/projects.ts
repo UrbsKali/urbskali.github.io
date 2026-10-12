@@ -5,8 +5,7 @@ export const projects: Project[] = [
 		id: 'PRJ-26-03',
 		slug: 'e-spin',
 		name: 'E-Spin',
-		date: new Date('2026-03-26'),
-		year: 2026,
+		start_date: new Date('2026-03-26'),
 		domains: ['Electronics', 'Software'],
 		description: `E-Spin rethinks how and where prototyping happens.
 
@@ -60,11 +59,11 @@ Close collaboration ensured tight integration between electronics and mechanical
 ### Results (Kickstarter Launch)
 - Funded in under 7.5 hours
 - 200% funded within 7 days
-- 59 backers / €2,037 pledged (week 1)
+- 101 backers / €3,249 pledged so far
 - International demand across Europe and beyond
 - Featured by external platforms (e.g., Hackster.io)`,
 		skills_used: ['KiCAD', 'Industrial Design', 'Crowdfunding'],
-		images: ['/assets/images/ESPIN/Hero.png', '/assets/images/ESPIN/Exploded_details_big.png'],
+		images: ['/assets/images/ESPIN/Hero.png', '/assets/images/ESPIN/Exploded_details_big.png', '/assets/images/ESPIN/proto.jpg'],
 		models_3d: ['/assets/models/Handspinner.glb'],
 		hotspots_per_model: [
 			[
@@ -106,8 +105,7 @@ Close collaboration ensured tight integration between electronics and mechanical
 		id: 'PRJ-25-09',
 		slug: 'smartlock',
 		name: 'Smart Lock',
-		date: new Date('2025-09-25'),
-		year: 2025,
+		start_date: new Date('2025-09-25'),
 		domains: ['Electronics', 'Software'],
 		description: `A NFC and Bluetooth enabled smart lock designed to secure the locker of DaVinciBot, without the need for code, and working with the students card of our members. The lock is designed to be easily installable on any locker and provides a secure and convenient way for members to access their belongings.
 
@@ -148,8 +146,8 @@ I led the project end-to-end, from initial concept to final deployment, with sup
 		id: 'PRJ-25-04',
 		slug: 'cdr',
 		name: 'French Robotic cup',
-		date: new Date('2025-05-15'),
-		year: 2025,
+		start_date: new Date('2025-05-15'),
+		end_date: new Date('2026-06-01'),
 		domains: ['Electronics', 'Mechanical', 'Management'],
 		description: `Designed and developed a fleet of autonomous robots for a european robotics competition involving 100+ teams and real-time matches.
 Led a 12-member multidisciplinary team while contributing to embedded systems, communication architecture, and decision-making algorithms.
@@ -231,6 +229,7 @@ Designed logic for:
 - Match strategy execution
 - Real-time adaptation to the opponent during the 100-second match`,
 		skills_used: ['C++', 'PCB Design', 'Solidworks', 'Management'],
+		experience_slugs: ['president-davincibot'],
 		model_3d: '/assets/models/cdr2025.glb',
 		images: ['/assets/images/CDR/cdr25.jpg', '/assets/images/CDR/cdr24.webp', '/assets/images/CDR/equipe25.jpg'],
 		links: [
@@ -242,8 +241,7 @@ Designed logic for:
 		id: 'PRJ-25-02',
 		slug: 'president-davincibot',
 		name: 'President of DaVinciBot',
-		date: new Date('2025-02-20'),
-		year: 2025,
+		start_date: new Date('2025-02-20'),
 		domains: ['Management'],
 		description:
 			'Elected President of DaVinciBot, the robotics club of ESILV engineering school. Oversaw a team of 130+ members, organized workshops and events, and led the club to new heights in terms of project quality and member engagement.',
@@ -258,8 +256,7 @@ Designed logic for:
 		id: 'PRJ-24-02',
 		slug: 'treso-davincibot',
 		name: 'Treasurer of DaVinciBot',
-		date: new Date('2024-02-20'),
-		year: 2024,
+		start_date: new Date('2024-02-20'),
 		domains: ['Management'],
 		description:
 			"Served as Treasurer of DaVinciBot, the robotics club of ESILV engineering school. Managed the club's finances, made budget forecasts, added compliance measures, and ensured transparent financial reporting.",
@@ -274,8 +271,7 @@ Designed logic for:
 		id: 'PRJ-24-01',
 		slug: 'respo-module-emlv',
 		name: 'Module coordinator at EMLV',
-		date: new Date('2024-01-20'),
-		year: 2024,
+		start_date: new Date('2024-01-20'),
 		domains: ['Other'],
 		description:
 			'Served as module coordinator for the "Technological development and innovation" module at EMLV, an Top 3 post-sixth-form Buisness School in France. Coordinated a team of 20+ teachers, designed the curriculum, and ensured the successful delivery of the module to 1,000+ students for two consecutive years.',
@@ -287,8 +283,7 @@ Designed logic for:
 		id: 'PRJ-25-08',
 		slug: 'cohoma',
 		name: 'CoHoMa',
-		date: new Date('2025-08-20'),
-		year: 2025,
+		start_date: new Date('2025-08-20'),
 		domains: ['Software'],
 		description: `CoHoMa focuses on collaboration between humans and machines.
 
@@ -312,8 +307,7 @@ Our response combines:
 		id: 'PRJ-25-11',
 		slug: 'drone-defense-hackathon',
 		name: 'Drone Defense Hackathon',
-		date: new Date('2025-11-10'),
-		year: 2025,
+		start_date: new Date('2025-11-10'),
 		domains: ['Software', 'Electronics'],
 		description: `Participated in the Drone Defense Hackathon, a major European defense innovation event held at the Grand Palais in Paris, bringing together 200+ engineering students (selected from thousands) to design and prototype drone-based solutions for real-world military use cases.
 
@@ -342,6 +336,7 @@ This experience strengthened my ability to:
 - Build systems with both practical deployment considerations and long-term reuse in mind
 		`,
 		skills_used: ['LoRa', 'GNSS', 'Embedded Systems'],
+		experience_slugs: ['president-davincibot'],
 		images: ['/assets/images/DDH/ddh.jpg', '/assets/images/DDH/ddh1.jpg', '/assets/images/DDH/ddh2.jpg', '/assets/images/DDH/grandpalais.webp'],
 		links: [
 			{ type: 'website', label: 'Blog post', url: 'https://davincibot.fr/blog/davincibot-selectionne-pour-le-drone-defense-hackathon/' },
