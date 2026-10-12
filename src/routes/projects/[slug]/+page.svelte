@@ -48,7 +48,7 @@
 	</header>
 
 
-		<aside class="order-2 font-mono text-sm lg:sticky lg:top-8 lg:order-1">
+		<aside class="order-2 font-mono text-sm lg:sticky lg:top-8 lg:order-1 lg:col-span-1 col-span-2">
 			<div class="space-y-8">
 				<div class="border-l border-border pl-4">
 					<div class="mb-2 text-xs uppercase text-secondary">Domains</div>
@@ -92,7 +92,7 @@
 			</div>
 		</aside>
 
-		<main class="order-3 min-w-0 lg:order-2">
+		<main class="order-3 min-w-0 lg:order-2 lg:col-span-1 col-span-2">
 			<section class="markdown-content">
 				<h2 class="mb-8 border-b border-border pb-4 text-2xl font-bold uppercase tracking-tight">Project Overview</h2>
 				<div class="text-lg leading-relaxed text-secondary">
@@ -101,7 +101,7 @@
 			</section>
 		</main>
 		{#if has3DContent}
-			<aside class="order-1 lg:order-0 lg:col-span-2">
+			<aside class="order-1 lg:order-0 col-span-2">
 				<div class="">
 					<ModelViewer project={project} />
 				</div>
