@@ -1,0 +1,41 @@
+name: Build and Deploy to gh-pages
+
+on:
+  push:
+    branches:
+      - main # Change to 'master' if that is your default branch
+
+permissions:
+  contents: write # Required for peaceiris/actions-gh-pages to commit to gh-pages
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build Svelte app
+        env:
+          # Sets base path if deployed to subpath (e.g., username.github.io/repo-name)
+          BASE_PATH: '/${{ github.event.repository.name }}'
+        run: bun run build
+
+      - name: Add .nojekyll file
+        run: touch build/.nojekyll
+
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          publish_branch: gh-pages
