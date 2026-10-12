@@ -1,100 +1,111 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { scale } from 'svelte/transition';
 	import type { ExperienceIcon } from '$lib/data/experiences';
 
 	let { activeIcon }: { activeIcon: ExperienceIcon } = $props();
 
-	const groupPixels = [
-			'000010000',
-			'000111000',
-			'000111000',
-			'010111010',
-			'011111110',
-			'111111111',
-			'111111111',
-			'011111110',
-			'001111100'
-		];
-	const bookPixels = [
-			'000000000',
-			'011000110',
-			'010100010',
-			'010100010',
-			'010111010',
-			'010100010',
-			'010100010',
-			'011000110',
-			'000000000'
-		];
-	const chipPixels = [
-			'000010000',
-			'000010000',
-			'001111100',
-			'011000110',
-			'111000111',
-			'011000110',
-			'001111100',
-			'000010000',
-			'000010000'
-		];
-	const crownPixels = [
-		'000010000',
-		'010101010',
-		'011111110',
-		'111111111',
-		'011111110',
-		'001111100',
-		'001111100',
-		'011111110',
-		'000000000'
-	];
-	const robotPixels = [
-		'000010000',
-		'001111100',
-		'011111110',
-		'010101010',
-		'011111110',
-		'001111100',
-		'011111110',
-		'010000010',
-		'011111110'
-	];
+	const icons = ['leadership', 'education', 'engineering', 'crown', 'book', 'robot'] as const;
+	const iconGridSize = 11;
 	const iconPixels: Record<ExperienceIcon, string[]> = {
-		leadership: groupPixels,
-		education: bookPixels,
-		engineering: chipPixels,
-		crown: crownPixels,
-		book: bookPixels,
-		robot: robotPixels
+		leadership: [
+			'00000100000',
+			'00011111000',
+			'00111111100',
+			'00111111100',
+			'00011111000',
+			'00001110000',
+			'00111111100',
+			'01111111110',
+			'11111111111',
+			'01111111110',
+			'00111111100'
+		],
+		education: [
+			'00000100000',
+			'00001110000',
+			'00011111000',
+			'00111111100',
+			'01111111110',
+			'11100100111',
+			'00100000100',
+			'00100000100',
+			'00111111100',
+			'00011111000',
+			'00000000000'
+		],
+		engineering: [
+			'00000100000',
+			'00000100000',
+			'00100100100',
+			'00011111000',
+			'00111111100',
+			'01110101110',
+			'01110101110',
+			'00111111100',
+			'00011111000',
+			'00000100000',
+			'00000100000'
+		],
+		crown: [
+			'00000000000',
+			'01000000010',
+			'01100000110',
+			'01110001110',
+			'01101010110',
+			'01101110110',
+			'01111111110',
+			'01111111110',
+			'11111111111',
+			'11111111111',
+			'00000000000'
+		],
+		book: [
+			'00000000000',
+			'00111111110',
+			'01111111111',
+			'01100000011',
+			'01100000011',
+			'01100000011',
+			'01100000011',
+			'01100000011',
+			'01111111111',
+			'00111111110',
+			'00000000000'
+		],
+		robot: [
+			'00000100000',
+			'00000100000',
+			'00000100000',
+			'00111111100',
+			'01111111110',
+			'01101010110',
+			'01111111110',
+			'01100100110',
+			'00111111100',
+			'00010001000',
+			'00100000100'
+		]
 	};
 
 	let dotVisual: HTMLDivElement;
-	let prefersReducedMotion = $state(false);
-	let dotGrid = $state({ x: 0, y: 0, size: 24, grayRadius: 1.5, radius: 3.5 });
+	let dotGrid = $state({ x: 0, y: 0, size: 24, radius: 1.5 });
 
 	onMount(() => {
-		const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-		const updateMotionPreference = () => (prefersReducedMotion = motionPreference.matches);
-		updateMotionPreference();
-		motionPreference.addEventListener('change', updateMotionPreference);
-
 		const updateGridAlignment = () => {
 			const bounds = dotVisual.getBoundingClientRect();
 			const styles = getComputedStyle(dotVisual);
 			const size = Number.parseFloat(styles.getPropertyValue('--dot-grid-size')) || 24;
-			const grayRadius = Number.parseFloat(styles.getPropertyValue('--dot-grid-radius')) || 1.5;
-			const radius = grayRadius + 2;
+			const radius = Number.parseFloat(styles.getPropertyValue('--dot-grid-radius')) || 1.5;
 			const layerLeft = bounds.left + (bounds.width - 256) / 2;
 			const layerTop = bounds.top + (bounds.height - 256) / 2;
 			const phaseX = ((size / 2 - (layerLeft % size)) % size + size) % size;
 			const phaseY = ((size / 2 - (layerTop % size)) % size + size) % size;
+			const gridOffset = (iconGridSize - 1) / 2;
 
 			dotGrid = {
-				x: phaseX + (Math.round((128 - phaseX) / size) - 4) * size,
-				y: phaseY + (Math.round((128 - phaseY) / size) - 4) * size,
+				x: phaseX + (Math.round((128 - phaseX) / size) - gridOffset) * size,
+				y: phaseY + (Math.round((128 - phaseY) / size) - gridOffset) * size,
 				size,
-				grayRadius,
 				radius
 			};
 		};
@@ -104,7 +115,6 @@
 		window.addEventListener('scroll', updateGridAlignment, { passive: true });
 
 		return () => {
-			motionPreference.removeEventListener('change', updateMotionPreference);
 			window.removeEventListener('resize', updateGridAlignment);
 			window.removeEventListener('scroll', updateGridAlignment);
 		};
@@ -112,14 +122,16 @@
 </script>
 
 <div class="dot-visual" bind:this={dotVisual} aria-hidden="true">
-	{#key activeIcon}
+	{#each icons as icon}
 		<svg
 			class="dot-layer"
+			class:active={activeIcon === icon}
+			style:--layer-opacity={activeIcon === icon ? 1 : 0}
 			viewBox="0 0 256 256"
 			width="256"
 			height="256"
 		>
-			{#each iconPixels[activeIcon] as row, rowIndex}
+			{#each iconPixels[icon] as row, rowIndex}
 				{#each [...row] as pixel, columnIndex}
 					{#if pixel === '1'}
 						<circle
@@ -127,14 +139,12 @@
 							cy={dotGrid.y + rowIndex * dotGrid.size}
 							r={dotGrid.radius}
 							fill="var(--color-accent)"
-							in:scale={{ start: dotGrid.grayRadius / dotGrid.radius, duration: prefersReducedMotion ? 0 : 220 }}
-							out:scale={{ start: dotGrid.grayRadius / dotGrid.radius, duration: prefersReducedMotion ? 0 : 180 }}
 						/>
 					{/if}
 				{/each}
 			{/each}
 		</svg>
-	{/key}
+	{/each}
 
 </div>
 
@@ -164,10 +174,28 @@
 		width: 256px;
 		aspect-ratio: 1;
 		overflow: visible;
+		opacity: var(--layer-opacity);
+		transition: opacity 220ms ease-out;
 	}
 
 	.dot-layer circle {
 		transform-box: fill-box;
 		transform-origin: center;
+		transform: scale(1);
+		transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+
+	.dot-layer.active circle {
+		transform: scale(2.33);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.dot-layer {
+			transition: none;
+		}
+
+		.dot-layer circle {
+			transition: none;
+		}
 	}
 </style>
