@@ -107,11 +107,14 @@ Close collaboration ensured tight integration between electronics and mechanical
 		name: 'Smart Lock',
 		start_date: new Date('2025-09-25'),
 		domains: ['Electronics', 'Software'],
-		description: `A NFC and Bluetooth enabled smart lock designed to secure the locker of DaVinciBot, without the need for code, and working with the students card of our members. The lock is designed to be easily installable on any locker and provides a secure and convenient way for members to access their belongings.
+		description: `A NFC and Wifi enabled smart lock designed to secure the locker of DaVinciBot, without the need for code, and working with the students card of our members. The lock is designed to be easily installable on any locker and provides a secure and convenient way for members to access the materials offered by DaVinciBot.
+
+It can work unplugged from the wall for up to 6 months, with a 9v LiPo battery and a battery optimised firmware, it fetch the authorized user from the Association Database, that can be edited on the DaVinciBot website, and unlock the locker if the user is authorized. 
 
 ## My Role		
 I led the project end-to-end, from initial concept to final deployment, with support at the end for the mechanical design and integration, in order to teach the new members of DaVinciBot the process of designing and building a complete hardware product:
 - Hardware design and prototyping (KiCAD)
+- Analog circuit design (mixed circuit, antenna matching)
 - Firmware development (C++ on ESP32-C3)
 - Mechanical integration and 3D modeling (SOLIDWORKS for CAD, Blender for 3D rendering)
 - Testing, iteration, and deployment in the locker room`,

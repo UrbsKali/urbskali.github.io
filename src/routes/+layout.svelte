@@ -22,6 +22,7 @@
 		<nav class="font-mono text-xs text-secondary flex gap-8">
 			<a href="{base}/" class="hover:text-accent transition-colors">HOME</a>
 			<a href="{base}/projects" class="hover:text-accent transition-colors">PROJECTS</a>
+			<a href="{base}/timeline" class="hover:text-accent transition-colors">TIMELINE</a>
 		</nav>
 	</header>
 
