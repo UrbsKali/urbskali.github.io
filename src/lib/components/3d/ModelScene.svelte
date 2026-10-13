@@ -351,9 +351,10 @@
 	/>
 </T.PerspectiveCamera>
 
-<T.AmbientLight intensity={0.8} />
-<T.DirectionalLight position={[10, 10, 5]} intensity={2.0} />
-<T.DirectionalLight position={[-10, 10, -5]} intensity={1.0} />
+<T.AmbientLight intensity={1.1} />
+<T.DirectionalLight position={[10, 10, 5]} intensity={3.0} />
+<T.DirectionalLight position={[-10, 10, -5]} intensity={1.5} />
+<T.DirectionalLight position={[5, 4, 8]} intensity={2.0} />
 <T.PointLight position={[0, -10, 0]} intensity={0.5} />
 
 <!-- Debug Helpers (Grid) -->

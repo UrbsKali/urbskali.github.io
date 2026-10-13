@@ -4,6 +4,7 @@
 
 	const dotStep = 24;
 	const axisWidth = 64;
+	const focusViewportRatio = 0.4;
 	const categoryColors: Record<TimelineCategory, string> = {
 		Employment: '#176d73',
 		Leadership: '#d94b31',
@@ -61,6 +62,7 @@
 	let timelineCanvas: HTMLDivElement;
 	let timelineDetail: HTMLElement;
 	let motionEnabled = $state(false);
+	let laneOffset = $state(0);
 	let connector = $state({
 		left: 0,
 		top: 0,
@@ -79,7 +81,7 @@
 		const canvasTop = timelineCanvas.getBoundingClientRect().top + window.scrollY;
 		const focusY = Math.max(
 			0,
-			Math.min(chartHeight, window.scrollY + window.innerHeight / 2 - canvasTop)
+			Math.min(chartHeight, window.scrollY + window.innerHeight * focusViewportRatio - canvasTop)
 		);
 		let closestIndex = 0;
 		let closestDistance = Number.POSITIVE_INFINITY;
@@ -98,16 +100,21 @@
 		const layoutRect = timelineLayout.getBoundingClientRect();
 		const canvasRect = timelineCanvas.getBoundingClientRect();
 		const detailRect = timelineDetail.getBoundingClientRect();
-		const laneCenter = canvasRect.left - layoutRect.left + axisWidth + activeEntry.lane * dotStep + dotStep / 2;
-		const barCenter =
-			canvasRect.top -
-			layoutRect.top +
-			(endMonth - activeEntry.entryEnd) * dotStep +
-			((activeEntry.entryEnd - activeEntry.entryStart + 1) * dotStep) / 2;
+		const firstLaneCenter = canvasRect.left + axisWidth + dotStep / 2;
+		const gridDotOffset = dotStep / 2;
+		laneOffset =
+			Math.round((firstLaneCenter - gridDotOffset) / dotStep) * dotStep +
+			gridDotOffset -
+			firstLaneCenter;
+		const laneCenter =
+			canvasRect.left - layoutRect.left + axisWidth + activeEntry.lane * dotStep + dotStep / 2;
+		const entryTop = (endMonth - activeEntry.entryEnd) * dotStep;
+		const entryBottom = entryTop + (activeEntry.entryEnd - activeEntry.entryStart + 1) * dotStep;
+		const connectorY = Math.max(entryTop, Math.min(entryBottom, focusY));
 		const detailLeft = detailRect.left - layoutRect.left;
 		connector = {
 			left: laneCenter,
-			top: barCenter,
+			top: canvasRect.top - layoutRect.top + connectorY,
 			width: Math.max(0, detailLeft - laneCenter),
 			color: categoryColors[activeEntry.category]
 		};
@@ -116,7 +123,7 @@
 	function focusEntry(index: number) {
 		const entry = entries[index];
 		const canvasTop = timelineCanvas.getBoundingClientRect().top + window.scrollY;
-		const top = canvasTop + getEntryMidpoint(entry) - window.innerHeight / 2;
+		const top = canvasTop + getEntryMidpoint(entry) - window.innerHeight * focusViewportRatio;
 		const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
 
 		window.scrollTo({ top: Math.max(0, top), behavior });
@@ -198,7 +205,7 @@
 						type="button"
 						class="timeline-entry"
 						class:selected={selectedIndex === index}
-						style={`--entry-color: ${categoryColors[entry.category]}; left: ${axisWidth + entry.lane * dotStep}px; top: ${top}px; height: ${height}px`}
+						style={`--entry-color: ${categoryColors[entry.category]}; left: ${axisWidth + entry.lane * dotStep + laneOffset}px; top: ${top}px; height: ${height}px`}
 						aria-label={`${entry.title} at ${entry.organization}, ${formatRange(entry)}`}
 						aria-pressed={selectedIndex === index}
 						title={`${entry.title} - ${entry.organization}`}
@@ -566,9 +573,10 @@
 		position: absolute;
 		top: 0.375rem;
 		bottom: 0.375rem;
-		left: calc(50% - 1px);
+		left: 50%;
 		width: 2px;
 		background: currentColor;
+		transform: translateX(-50%);
 		transition: background-color 160ms ease, width 160ms ease;
 	}
 

@@ -64,31 +64,31 @@ Close collaboration ensured tight integration between electronics and mechanical
 - Featured by external platforms (e.g., Hackster.io)`,
 		skills_used: ['KiCAD', 'Industrial Design', 'Crowdfunding'],
 		images: ['/assets/images/ESPIN/Hero.png', '/assets/images/ESPIN/Exploded_details_big.png', '/assets/images/ESPIN/proto.jpg'],
-		models_3d: ['/assets/models/Handspinner.glb'],
+		models_3d: ['/assets/models/E-SPIN_web_draco.glb'],
 		hotspots_per_model: [
 			[
 				{
-					position: [-1.25, -0.5, 0],
+					position: [1.25, -0.5, 0],
 					label: 'LiPo Battery',
 					description: 'Rechargeable battery providing up to 8 hours of continuous use, with USB-C charging and built-in protection circuitry.'
 				},
 				{
-					position: [1.5, -0.5, 0],
+					position: [-1.5, -0.5, 0],
 					label: 'ESP32 C3 mini',
 					description: 'Low-power microcontroller with integrated Wi-Fi and Bluetooth connectivity, serving as the brain of the E-Spin board.'
 				},
 				{
-					position: [0.8, -0.6, 0],
+					position: [-0.8, -0.6, 0],
 					label: 'IMU',
-					description: 'High precison 6 axis Inertial Mersurment Unit, capable of Wake on Motion and include a podometer'
+					description: 'High precison 9 axis Inertial Mersurment Unit, capable of Wake on Motion and include a podometer'
 				},
 				{
-					position: [0.9, -0.45, 0.5],
+					position: [-0.9, -0.45, 0.5],
 					label: 'GPIOs',
 					description: '12 General Purpose Input/Output pins for connecting sensors, actuators, and other peripherals, with support for I2C, SPI, ADC and PWM interfaces.'
 				},
 				{
-					position: [-1.1, -0.7, 0],
+					position: [1.1, -0.7, 0],
 					label: 'LED ribbon',
 					description: 'Fully addressable RGB LED strip with 8 LEDs, allowing for customizable lighting effects and visual feedback for your projects.'
 				}
@@ -119,8 +119,8 @@ I led the project end-to-end, from initial concept to final deployment, with sup
 - Mechanical integration and 3D modeling (SOLIDWORKS for CAD, Blender for 3D rendering)
 - Testing, iteration, and deployment in the locker room`,
 		skills_used: ['KiCAD', 'Analog Design', 'Firmware Development'],
-		images: [],
-		model_3d: '/assets/models/smartlock.glb',
+		images: ['/assets/images/smartlock/mockup.webp'],
+		model_3d: '/assets/models/Smartlock_web_draco.glb',
 		hotspots: [
 			{
 				position: [-0.4, 0, -0.55],
