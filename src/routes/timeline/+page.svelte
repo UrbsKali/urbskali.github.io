@@ -50,6 +50,7 @@
 	const laneCount = lanePeriods.length;
 	const chartWidth = axisWidth + laneCount * dotStep;
 	const chartHeight = (endMonth - startMonth + 1) * dotStep;
+	const mobileEntries = [...entries].reverse();
 	const years = Array.from(
 		{ length: Math.floor(endMonth / 12) - Math.floor(startMonth / 12) + 1 },
 		(_, index) => Math.floor(startMonth / 12) + index
@@ -160,11 +161,11 @@
 	<div class="mb-3 font-mono text-xs uppercase text-secondary">Experience / 2019—2027</div>
 	<h1 class="text-3xl font-bold uppercase leading-tight text-primary sm:text-4xl">Timeline</h1>
 	<p class="mt-3 max-w-2xl text-sm leading-relaxed text-secondary">
-		Education, engineering, and leadership, plotted by date. Select a period to see what I worked on.
+		Trace work, study, and leadership across overlapping periods.
 	</p>
 </section>
 
-<div class="timeline-layout grid grid-cols-1 gap-8 border-t border-border pt-6 lg:grid-cols-[minmax(18rem,22rem)_minmax(0,1fr)] lg:gap-12" class:motion-enabled={motionEnabled} bind:this={timelineLayout}>
+<div class="timeline-layout hidden grid-cols-1 gap-8 border-t border-border pt-6 lg:grid lg:grid-cols-[minmax(18rem,22rem)_minmax(0,1fr)] lg:gap-12" class:motion-enabled={motionEnabled} bind:this={timelineLayout}>
 	<section class="order-2 lg:order-1" aria-label="Experience timeline">
 		<div class="mb-3 flex items-baseline justify-between font-mono text-[10px] uppercase text-secondary">
 			<span>{laneCount} concurrent tracks</span>
@@ -255,6 +256,47 @@
 		></div>
 	{/if}
 </div>
+
+<section class="mobile-timeline lg:hidden" aria-label="Experience timeline">
+	<div class="mobile-timeline-heading">
+		<span>{mobileEntries.length} periods</span>
+		<span>Latest first / 2019—2027</span>
+	</div>
+	{#each mobileEntries as entry}
+		{@const startParts = formatMonth(entry.entryStart).split(' ')}
+		{@const endParts = entry.status === 'present' ? ['Now'] : formatMonth(entry.entryEnd).split(' ')}
+		<article class="mobile-entry" style={`--entry-color: ${categoryColors[entry.category]}`} aria-label={`${entry.title} at ${entry.organization}, ${formatRange(entry)}`}>
+			<div class="mobile-date" aria-hidden="true">
+				<span class="mobile-date-month">{startParts[0]}</span>
+				<strong>{startParts[1]}</strong>
+				<span class="mobile-date-arrow">↓</span>
+				<span class="mobile-date-end">{endParts.join(' ')}</span>
+				{#if entry.status === 'expected'}
+					<span class="mobile-date-status">Expected</span>
+				{/if}
+			</div>
+			<div class="mobile-entry-content">
+				<div class="mobile-entry-meta">
+					<span>{entry.category}</span>
+					<span>Track {String(entry.lane + 1).padStart(2, '0')}</span>
+				</div>
+				<h2>{entry.title}</h2>
+				<div class="mobile-entry-organization">{entry.organization}</div>
+				{#if entry.location}
+					<div class="mobile-entry-location">{entry.location}</div>
+				{/if}
+				<p>{entry.description}</p>
+				{#if entry.highlights?.length}
+					<ul>
+						{#each entry.highlights as highlight}
+							<li>{highlight}</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+		</article>
+	{/each}
+</section>
 
 <style>
 	.timeline-layout {
@@ -355,6 +397,151 @@
 		font-family: var(--font-mono);
 		font-size: 0.625rem;
 		color: var(--color-secondary);
+	}
+
+	.mobile-timeline {
+		border-top: 1px solid var(--color-border);
+		padding-top: 1rem;
+	}
+
+	.mobile-timeline-heading,
+	.mobile-entry-meta {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.5rem;
+		font-family: var(--font-mono);
+		font-size: 0.625rem;
+		text-transform: uppercase;
+	}
+
+	.mobile-timeline-heading {
+		margin-bottom: 0.75rem;
+		color: var(--color-secondary);
+	}
+
+	.mobile-entry {
+		position: relative;
+		display: grid;
+		grid-template-columns: 4rem minmax(0, 1fr);
+		column-gap: 1rem;
+		padding: 1.25rem 0 1.75rem;
+	}
+
+	.mobile-entry::before {
+		position: absolute;
+		left: 4.4rem;
+		top: 1.45rem;
+		bottom: -0.25rem;
+		width: 1px;
+		background: color-mix(in srgb, var(--entry-color) 46%, transparent);
+		content: '';
+	}
+
+	.mobile-entry::after {
+		position: absolute;
+		left: calc(4.4rem - 4px);
+		top: 1.2rem;
+		width: 9px;
+		height: 9px;
+		border: 2px solid var(--entry-color);
+		border-radius: 50%;
+		background: var(--color-background);
+		content: '';
+	}
+
+	.mobile-entry:last-child::before {
+		bottom: 1.75rem;
+	}
+
+	.mobile-date {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		padding-top: 0.125rem;
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		line-height: 1.2;
+		text-align: right;
+	}
+
+	.mobile-date-month {
+		color: var(--entry-color);
+		text-transform: uppercase;
+	}
+
+	.mobile-date strong {
+		margin-top: 0.15rem;
+		color: var(--color-primary);
+	}
+
+	.mobile-date-arrow {
+		margin: 0.25rem 0;
+		color: var(--color-secondary);
+	}
+
+	.mobile-date-end {
+		color: var(--color-secondary);
+	}
+
+	.mobile-date-status {
+		margin-top: 0.25rem;
+		font-size: 0.5rem;
+		color: var(--color-accent);
+		text-transform: uppercase;
+	}
+
+	.mobile-entry-content {
+		min-width: 0;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.mobile-entry-meta {
+		margin-bottom: 0.6rem;
+		color: var(--entry-color);
+	}
+
+	.mobile-entry-content h2 {
+		font-size: 1.125rem;
+		font-weight: 700;
+		line-height: 1.25;
+		text-transform: uppercase;
+	}
+
+	.mobile-entry-organization {
+		margin-top: 0.35rem;
+		font-size: 0.875rem;
+		color: var(--color-secondary);
+	}
+
+	.mobile-entry-location {
+		margin-top: 0.2rem;
+		font-family: var(--font-mono);
+		font-size: 0.625rem;
+		color: var(--color-secondary);
+	}
+
+	.mobile-entry-content p {
+		margin-top: 0.75rem;
+		font-size: 0.8125rem;
+		line-height: 1.6;
+		color: var(--color-secondary);
+	}
+
+	.mobile-entry-content ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.375rem;
+		margin-top: 0.75rem;
+	}
+
+	.mobile-entry-content li {
+		border: 1px solid var(--color-border);
+		padding: 0.25rem 0.4rem;
+		font-family: var(--font-mono);
+		font-size: 0.5625rem;
+		color: var(--color-primary);
 	}
 
 	.timeline-now {
