@@ -26,7 +26,7 @@
 		</nav>
 	</header>
 
-	<main class="max-w-screen-xl mx-auto px-6 py-12 relative pb-24 flex-1">
+	<main class="max-w-screen-xl w-full mx-auto px-6 py-12 relative pb-24 flex-1">
 		{@render children()}
 	</main>
 
