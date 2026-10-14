@@ -21,3 +21,5 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+static/assets/models/lattice_c8x8x8_s40x40x40_b0.8_v0.1_z0.66_t70deg.stl
+static/assets/models/lattice_hybrid_sheetdiamond_zone.stl

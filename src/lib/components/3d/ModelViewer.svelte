@@ -42,16 +42,18 @@
 		return project.model_3d ? [resolveAssetUrl(project.model_3d)] : [];
 	});
 
-	const imageUrls = $derived((project.images ?? []).filter((url) => url.length > 0).map((url) => resolveAssetUrl(url)));
+	const imageUrls = $derived(project.og_img ? [resolveAssetUrl(project.og_img)] : []);
 
 	const deckItems = $derived.by((): DeckItem[] => {
 		const items: DeckItem[] = [];
 		modelUrls.forEach((url, i) => {
 			items.push({ kind: 'model', url, modelIndex: i, label: getModelLabel(url, i), itemIndex: items.length });
 		});
-		imageUrls.forEach((url, i) => {
-			items.push({ kind: 'image', url, imageIndex: i, label: getImageLabel(url, i), itemIndex: items.length });
-		});
+		if (items.length === 0) {
+			imageUrls.forEach((url, i) => {
+				items.push({ kind: 'image', url, imageIndex: i, label: getImageLabel(url, i), itemIndex: items.length });
+			});
+		}
 		return items;
 	});
 

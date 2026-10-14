@@ -5,10 +5,45 @@
 	import { projects } from '$lib/data/projects';
 	import { formatProjectDateRange, formatProjectDuration } from '$lib/utils/projectDates';
 	import ModelViewer from '$lib/components/3d/ModelViewer.svelte';
+	const markdownRenderer = new marked.Renderer();
+	const externalLinkIcon = '<svg class="markdown-external-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+	const defaultLinkRenderer = markdownRenderer.link;
+	markdownRenderer.link = (token) => {
+		const link = defaultLinkRenderer.call(markdownRenderer, token);
+		if (!/^https?:\/\//i.test(token.href)) return link;
+
+		return link
+			.replace('<a ', '<a class="markdown-external-link" target="_blank" rel="noopener noreferrer" ')
+			.replace('>', `>${externalLinkIcon}`);
+	};
+	const defaultImageRenderer = markdownRenderer.image;
+	markdownRenderer.image = (token) => {
+		const imageHref = token.href?.startsWith('/') && !token.href.startsWith('//')
+			? `${base}${token.href}`
+			: token.href;
+		const image = defaultImageRenderer.call(markdownRenderer, { ...token, href: imageHref });
+		const caption = token.text.trim();
+		if (!caption) return image;
+
+		const escapedCaption = caption.replace(/[&<>"']/g, (character) => {
+			const entities: Record<string, string> = {
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&quot;',
+				"'": '&#39;'
+			};
+			return entities[character];
+		});
+		return `<span class="markdown-image">${image}<span class="markdown-image-caption">${escapedCaption}</span></span>`;
+	};
 	let { data } = $props();
 	let project = $derived(data.project);
-	let descriptionHtml = $derived(marked.parse(project.description, { gfm: true, breaks: true, async: false }));
-	let has3DContent = $derived(Boolean(project.model_3d) || (project.models_3d?.length ?? 0) > 0 || (project.images?.length ?? 0) > 0);
+	let descriptionHtml = $derived(marked.parse(project.description, { gfm: true, breaks: true, async: false, renderer: markdownRenderer }));
+	let has3DModel = $derived(Boolean(project.model_3d) || (project.models_3d?.length ?? 0) > 0);
+	let heroImage = $derived(project.og_img
+		? project.og_img.startsWith('/') ? `${base}${project.og_img}` : project.og_img
+		: '');
 	let duration = $derived(project.end_date === undefined ? null : formatProjectDuration(project.start_date, project.end_date ?? new Date()));
 	let linkedExperiences = $derived((project.experience_slugs ?? []).flatMap((slug) => {
 		const experience = experiences.find((item) => item.slug === slug);
@@ -100,11 +135,13 @@
 				</div>
 			</section>
 		</main>
-		{#if has3DContent}
+		{#if has3DModel}
 			<aside class="order-1 lg:order-0 col-span-2">
-				<div class="">
-					<ModelViewer project={project} />
-				</div>
+				<ModelViewer project={project} />
+			</aside>
+		{:else if heroImage}
+			<aside class="order-1 lg:order-0 col-span-2 mb-12">
+				<img src={heroImage} alt={project.name} class="block max-h-[70vh] w-full object-cover object-center" />
 			</aside>
 		{/if}
 	</div>
@@ -144,8 +181,31 @@
 	.markdown-content :global(blockquote) {
 		color: var(--color-secondary);
 		line-height: 1.75;
-		margin-top: 0.9rem;
-		margin-bottom: 0.9rem;
+		margin-top: 1.1rem;
+		margin-bottom: 1.1rem;
+	}
+
+	.markdown-content :global(.markdown-image) {
+		display: block;
+		max-width: 100%;
+		margin: 2rem auto;
+	}
+
+	.markdown-content :global(.markdown-image img) {
+		display: block;
+		max-width: 100%;
+		height: auto;
+		margin-inline: auto;
+	}
+
+	.markdown-content :global(.markdown-image-caption) {
+		display: block;
+		margin-top: 0.65rem;
+		color: var(--color-secondary);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		line-height: 1.5;
+		text-align: center;
 	}
 
 	.markdown-content :global(ul),
@@ -233,6 +293,19 @@
 
 	.markdown-content :global(a:hover) {
 		border-bottom-color: var(--color-accent);
+	}
+
+	.markdown-content :global(.markdown-external-link) {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		vertical-align: middle;
+	}
+
+	.markdown-content :global(.markdown-external-link-icon) {
+		flex: 0 0 auto;
+		width: 0.85em;
+		height: 0.85em;
 	}
 
 	.markdown-content :global(strong) {

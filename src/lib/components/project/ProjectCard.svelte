@@ -12,8 +12,8 @@
 
 	$: secondaryDomains = project.domains.slice(1);
 	$: projectDateRange = formatProjectDateRange(project);
-	$: needsImageBackdrop = /\.(png|webp|svg)(\?.*)?$/i.test(project.images[0] ?? '');
-	$: primaryImage = project.images[0] ? resolveAssetUrl(project.images[0]) : '';
+	$: needsImageBackdrop = /\.(png|webp|svg)(\?.*)?$/i.test(project.og_img ?? '');
+	$: primaryImage = project.og_img ? resolveAssetUrl(project.og_img) : '';
 </script>
 
 <a href="{base}/projects/{project.slug}" class="block group relative bg-surface border border-border overflow-hidden hover:border-accent transition-colors duration-300 {featured ? 'md:grid md:grid-cols-12 md:items-stretch' : ''}" class:featured>
@@ -24,7 +24,7 @@
 	<div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary opacity-20 group-hover:opacity-100 group-hover:border-accent transition-opacity z-10"></div>
 	
 	<!-- Image Display -->
-	{#if project.images.length > 0}
+	{#if project.og_img}
 		<div class="relative w-full h-48 {featured ? 'md:col-span-8 md:h-auto md:min-h-104 md:border-r md:border-b-0 border-border' : ''} overflow-hidden border-b border-border {needsImageBackdrop ? 'bg-linear-to-br from-primary/5 via-surface to-accent/10' : 'bg-surface'}">
 			<img 
 				src={primaryImage}

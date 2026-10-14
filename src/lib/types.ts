@@ -23,7 +23,7 @@ export interface Project {
 	domains: ProjectDomain[];
 	description: string;      // Markdown or HTML string
 	skills_used: string[];    // Array of technical tags
-	images: string[];         // URLs to static assets
+	og_img?: string;          // URL to the project's Open Graph and preview image
 	model_3d?: string;        // Optional URL to .glb/.gltf file
 	models_3d?: string[];     // Optional list of URLs for multi-model projects
 	hotspots?: ProjectHotspot[]; // Optional 3D spatial annotations (single model fallback)

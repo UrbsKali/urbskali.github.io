@@ -8,6 +8,7 @@ export const projects: Project[] = [
 		start_date: new Date('2026-03-26'),
 		domains: ['Electronics', 'Software'],
 		description: `E-Spin rethinks how and where prototyping happens.
+		![](/assets/images/ESPIN/Hero.png)
 
 Traditional development boards stay on desks. E-Spin is designed to stay with you.
 
@@ -24,6 +25,8 @@ This enables rapid experimentation anywhere — from quick sensor tests to wirel
 
 ### What Makes It Different
 
+![E-Spin v3](/assets/images/ESPIN/proto.jpg)
+
 E-Spin is not a gadget pretending to be a dev board.
 It is a fully capable dev board that happens to be enjoyable to use.
 
@@ -33,6 +36,8 @@ Embedded reference PCB → practical engineering aid
 Plug-and-play GPIO → immediate hardware integration
 
 The form factor is not cosmetic — it directly impacts usability and adoption.
+
+![E-Spin exploded view](/assets/images/ESPIN/Exploded_details_big.png)
 
 ## My Role
 
@@ -63,7 +68,7 @@ Close collaboration ensured tight integration between electronics and mechanical
 - International demand across Europe and beyond
 - Featured by external platforms (e.g., Hackster.io)`,
 		skills_used: ['KiCAD', 'Industrial Design', 'Crowdfunding'],
-		images: ['/assets/images/ESPIN/Hero.png', '/assets/images/ESPIN/Exploded_details_big.png', '/assets/images/ESPIN/proto.jpg'],
+		og_img: '/assets/images/ESPIN/Hero.png',
 		models_3d: ['/assets/models/E-SPIN_web_draco.glb'],
 		hotspots_per_model: [
 			[
@@ -93,7 +98,6 @@ Close collaboration ensured tight integration between electronics and mechanical
 					description: 'Fully addressable RGB LED strip with 8 LEDs, allowing for customizable lighting effects and visual feedback for your projects.'
 				}
 			],
-			[] // Smartlock model — hotspots defined in the dedicated smartlock project
 		],
 		links: [
 			{ type: 'github', label: 'Repository', url: 'https://github.com/E-spin-fr' },
@@ -102,40 +106,23 @@ Close collaboration ensured tight integration between electronics and mechanical
 		]
 	},
 	{
-		id: 'PRJ-25-01',
-		slug: 'davincibot-website',
-		name: 'DaVinciBot Website',
-		start_date: new Date('2026-01-15'),
-		domains: ['Software'],
-		skills_used: ['SvelteKit', 'TypeScript', 'TailwindCSS'],
-		images: ['/assets/images/dvb_website/davincibot.fr.png'],
-		links: [{ type: 'website', label: 'Website', url: 'https://davincibot.fr' }, { type: 'github', label: 'Repository', url: 'https://github.com/DaVinciBot/cash'}],
-		description: `Redesigned and developed the official website for DaVinciBot, the robotics club of ESILV engineering school. Beyond showcasing projects and sharing news, the website brings the club's operations and resources together in one place.
-
-## Club Operations
-
-Members can place orders for their projects, track their requests, and see their project budgets. For the treasurer, the platform provides a central view of orders across all projects, spending tracking, a place to attach proof of expenditure, and automatically generated reports.
-
-The site also hosts internal tools, including screencasting, and centralises training resources for club members.
-
-## Publishing
-
-The website includes a custom blog with article customisation and a WYSIWYG editor, making it easier for the club to publish and manage its content.`
-	},
-	{
 		id: 'PRJ-25-10',
 		slug: 'metamaterials',
 		name: 'Metamaterials Research',
 		start_date: new Date('2025-10-01'),
 		domains: ['Software', 'Mechanical'],
+		og_img: '/assets/images/meta/hero.png',
 		skills_used: ['sCAD', 'Generative Design', 'C#'],
-		images: [],
-		links: [],
-		description: `I explored how architected materials could be designed to absorb shocks by controlling their geometry rather than relying on a solid material alone. The project focused on two complementary lattice approaches: hybrid TPMS structures and re-entrant honeycombs.
+		model_3d: '/assets/models/tmps_hybrid.glb',
+		links: [{ type: 'website', label: 'Institute for Future Technologies', url: 'https://ift.devinci.fr/' }],
+		description: `This research was conducted within the [Institute for Future Technologies (IFT)](https://ift.devinci.fr/) at De Vinci. IFT describes itself as a lab studio embedded in education, where students and researchers explore new forms of inquiry at the intersection of technology, human experience, and the natural world.
 
+I explored how architected materials could be designed to absorb shocks by controlling their geometry rather than relying on a solid material alone. The project focused on two complementary lattice approaches: hybrid TPMS structures and re-entrant honeycombs.
+
+![](/assets/images/meta/hero.png)
 ## Generative Design
 
-Using PicoGK, a voxel-based geometry kernel for C#, I built a procedural workflow to generate and vary the structures. One design track explored hybrid TPMS geometries combining a Schwarz network with Diamond sheet surfaces. The other investigated re-entrant honeycomb lattices, whose geometry can produce auxetic behavior and distinctive deformation under compression.
+Using [PicoGK](https://leap71.com/picogk/), a voxel-based geometry kernel for C#, I built a procedural workflow to generate and vary the structures. One design track explored hybrid TPMS geometries combining a Schwarz network with Diamond sheet surfaces. The other investigated re-entrant honeycomb lattices, whose geometry can produce auxetic behavior and distinctive deformation under compression.
 
 Across both approaches, I studied how geometric parameters shape stiffness, deformation, and energy absorption, with the goal of finding structures suited to impact and shock mitigation.
 
@@ -165,7 +152,7 @@ I led the project end-to-end, from initial concept to final deployment, with sup
 - Mechanical integration and 3D modeling (SOLIDWORKS for CAD, Blender for 3D rendering)
 - Testing, iteration, and deployment in the locker room`,
 		skills_used: ['KiCAD', 'Analog Design', 'Firmware Development'],
-		images: ['/assets/images/smartlock/mockup.webp'],
+		og_img: '/assets/images/smartlock/mockup.webp',
 		model_3d: '/assets/models/Smartlock_web_draco.glb',
 		hotspots: [
 			{
@@ -201,6 +188,8 @@ I led the project end-to-end, from initial concept to final deployment, with sup
 		description: `Designed and developed a fleet of autonomous robots for a european robotics competition involving 100+ teams and real-time matches.
 Led a 12-member multidisciplinary team while contributing to embedded systems, communication architecture, and decision-making algorithms.
 
+![2025 competition robot](/assets/images/CDR/cdr24.webp)
+
 ### Problem & Objectives
 
 The French Robotic Cup is a yearly engineering competition where fully autonomous robots compete in 100-second matches under strict constraints (no remote control, dynamic environment, evolving rules each year).
@@ -225,6 +214,9 @@ Develop a reliable, competitive robotic system capable of executing a full match
 - Developed low-frequency wireless communication (LoRa, ~400 MHz) for multi-robot coordination
 - Programmed autonomous robots in C/C++ on custom ESP32-S3 PCBs
 
+![Electrical Architecture of the main robot](/assets/images/CDR/archi_elek.png)
+
+
 #### System Architecture:
 
 - Designed communication enabling coordinated multi-robot strategies
@@ -236,6 +228,8 @@ Develop a reliable, competitive robotic system capable of executing a full match
 - Structured the project lifecycle around Agile-based principles
 - Drove team motivation and alignment toward a shared competitive goal
 - Enforced early delivery milestones to enable earlier software integration
+![The 2025 team](/assets/images/CDR/equipe25.jpg)
+
 
 ### Approach & Technical Work
 
@@ -276,11 +270,14 @@ Distributed architecture:
 Designed logic for:
 - Action prioritization
 - Match strategy execution
-- Real-time adaptation to the opponent during the 100-second match`,
+- Real-time adaptation to the opponent during the 100-second match
+
+You can find more details on the [official documentation website](https://docs.davincibot.fr/cdr/paris/2026/intro)
+`,
 		skills_used: ['C++', 'PCB Design', 'Solidworks', 'Management'],
 		experience_slugs: ['president-davincibot'],
 		model_3d: '/assets/models/cdr2025.glb',
-		images: ['/assets/images/CDR/cdr25.jpg', '/assets/images/CDR/cdr24.webp', '/assets/images/CDR/equipe25.jpg'],
+		og_img: '/assets/images/CDR/cdr25.jpg',
 		links: [
 			{ type: 'github', label: 'Repository', url: 'https://github.com/davincibot/CoupeDeRobotique' },
 			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' }
@@ -295,7 +292,7 @@ Designed logic for:
 		description:
 			'Elected President of DaVinciBot, the robotics club of ESILV engineering school. Oversaw a team of 130+ members, organized workshops and events, and led the club to new heights in terms of project quality and member engagement.',
 		skills_used: ['Leadership', 'Growth Strategy', 'Stategic planning', 'Conflit Resolution'],
-		images: ['/assets/images/Pres/dvb.jpg'],
+		og_img: '/assets/images/Pres/dvb.jpg',
 		links: [
 			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' },
 			{ type: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com/company/davincibot' }
@@ -310,11 +307,32 @@ Designed logic for:
 		description:
 			"Served as Treasurer of DaVinciBot, the robotics club of ESILV engineering school. Managed the club's finances, made budget forecasts, added compliance measures, and ensured transparent financial reporting.",
 		skills_used: ['Accounting', 'Excel', 'Financial Planning'],
-		images: ['/assets/images/Pres/dvb.jpg'],
+		og_img: '/assets/images/Pres/dvb.jpg',
 		links: [
 			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' },
 			{ type: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com/company/davincibot' }
 		]
+	},
+	{
+		id: 'PRJ-25-01',
+		slug: 'davincibot-website',
+		name: 'DaVinciBot Website',
+		start_date: new Date('2026-01-15'),
+		domains: ['Software'],
+		skills_used: ['SvelteKit', 'TypeScript', 'TailwindCSS'],
+		og_img: '/assets/images/dvb_website/davincibot.fr.png',
+		links: [{ type: 'website', label: 'Website', url: 'https://davincibot.fr' }, { type: 'github', label: 'Repository', url: 'https://github.com/DaVinciBot/cash'}],
+		description: `Redesigned and developed the official website for DaVinciBot, the robotics club of ESILV engineering school. Beyond showcasing projects and sharing news, the website brings the club's operations and resources together in one place.
+
+## Club Operations
+
+Members can place orders for their projects, track their requests, and see their project budgets. For the treasurer, the platform provides a central view of orders across all projects, spending tracking, a place to attach proof of expenditure, and automatically generated reports.
+
+The site also hosts internal tools, including screencasting, and centralises training resources for club members.
+
+## Publishing
+
+The website includes a custom blog with article customisation and a WYSIWYG editor, making it easier for the club to publish and manage its content.`
 	},
 	{
 		id: 'PRJ-24-01',
@@ -326,7 +344,7 @@ Designed logic for:
 		description:
 			'Served as module coordinator for the "Technological development and innovation" module at EMLV, an Top 3 post-sixth-form Buisness School in France. Coordinated a team of 20+ teachers, designed the curriculum, and ensured the successful delivery of the module to 1,000+ students for two consecutive years.',
 		skills_used: ['Project Management', 'Curriculum Design', 'Team Coordination'],
-		images: ['/assets/images/EMLV/EMLV-1.jpg'],
+		og_img: '/assets/images/EMLV/EMLV-1.jpg',
 		links: [{ type: 'website', label: 'Website', url: 'https://emlv.fr' }]
 	},
 	{
@@ -347,7 +365,7 @@ Our response combines:
 - Assisted navigation with a focus on intuitive human-machine interaction, enabling operators to maintain situational awareness without cognitive overload
 - An operator interface that guides decisions without overloading attention`,
 		skills_used: ['ROS2', 'Gazebo', 'C/C++', 'Python'],
-		images: ['/assets/images/COHOMA/cohoma.png'],
+		og_img: '/assets/images/COHOMA/cohoma.png',
 		links: [
 			{ type: 'website', label: 'Website', url: 'https://davincibot.fr' },
 			{ type: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com/company/davincibot' }
@@ -357,9 +375,11 @@ Our response combines:
 		id: 'PRJ-25-11',
 		slug: 'drone-defense-hackathon',
 		name: 'Drone Defense Hackathon',
+		og_img: '/assets/images/DDH/ddh.jpg',
 		start_date: new Date('2025-11-10'),
 		domains: ['Software', 'Electronics'],
 		description: `Participated in the Drone Defense Hackathon, a major European defense innovation event held at the Grand Palais in Paris, bringing together 200+ engineering students (selected from thousands) to design and prototype drone-based solutions for real-world military use cases.
+![Drone Defense Hackathon teams](/assets/images/DDH/ddh1.jpg)
 
 As President of DaVinciBot, I led the initiative end-to-end:
 
@@ -369,9 +389,16 @@ As President of DaVinciBot, I led the initiative end-to-end:
 
 Over an intensive 48 hour cycle, we developed a functional prototype addressing drone communication and operational constraints in contested environments.
 
+![Hackathon at the Grand Palais](/assets/images/DDH/grandpalais.webp)
+
 A key contribution was the design and implementation of a real-time video transmission system using low-frequency RF, enabling more robust communication in environments where conventional links are unreliable. This component was engineered with reusability in mind and is now a foundation for future DaVinciBot projects.
 
+![Drone Defense Hackathon prototype](/assets/images/DDH/ddh2.jpg)
+
+
 Beyond the technical deliverable, the experience involved:
+
+
 
 - Rapid prototyping and testing in a 1,000 m² live drone arena
 - Iterating under real-world constraints inspired by defense scenarios
@@ -387,7 +414,6 @@ This experience strengthened my ability to:
 		`,
 		skills_used: ['LoRa', 'GNSS', 'Embedded Systems'],
 		experience_slugs: ['president-davincibot'],
-		images: ['/assets/images/DDH/ddh.jpg', '/assets/images/DDH/ddh1.jpg', '/assets/images/DDH/ddh2.jpg', '/assets/images/DDH/grandpalais.webp'],
 		links: [
 			{ type: 'website', label: 'Blog post', url: 'https://davincibot.fr/blog/davincibot-selectionne-pour-le-drone-defense-hackathon/' },
 			{ type: 'website', label: 'Registration', url: 'https://www.agorize.com/en/challenges/drone-defense-hackathon' },
