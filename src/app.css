@@ -21,6 +21,8 @@
 .site-dot-grid {
   background-image: radial-gradient(var(--dot-grid-color) var(--dot-grid-radius), transparent calc(var(--dot-grid-radius) + 0.1px));
   background-size: var(--dot-grid-size) var(--dot-grid-size);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 160px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 160px);
 }
 
 .home-hero-atmosphere {

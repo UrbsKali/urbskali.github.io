@@ -102,6 +102,52 @@ Close collaboration ensured tight integration between electronics and mechanical
 		]
 	},
 	{
+		id: 'PRJ-25-01',
+		slug: 'davincibot-website',
+		name: 'DaVinciBot Website',
+		start_date: new Date('2026-01-15'),
+		domains: ['Software'],
+		skills_used: ['SvelteKit', 'TypeScript', 'TailwindCSS'],
+		images: ['/assets/images/dvb_website/davincibot.fr.png'],
+		links: [{ type: 'website', label: 'Website', url: 'https://davincibot.fr' }, { type: 'github', label: 'Repository', url: 'https://github.com/DaVinciBot/cash'}],
+		description: `Redesigned and developed the official website for DaVinciBot, the robotics club of ESILV engineering school. Beyond showcasing projects and sharing news, the website brings the club's operations and resources together in one place.
+
+## Club Operations
+
+Members can place orders for their projects, track their requests, and see their project budgets. For the treasurer, the platform provides a central view of orders across all projects, spending tracking, a place to attach proof of expenditure, and automatically generated reports.
+
+The site also hosts internal tools, including screencasting, and centralises training resources for club members.
+
+## Publishing
+
+The website includes a custom blog with article customisation and a WYSIWYG editor, making it easier for the club to publish and manage its content.`
+	},
+	{
+		id: 'PRJ-25-10',
+		slug: 'metamaterials',
+		name: 'Metamaterials Research',
+		start_date: new Date('2025-10-01'),
+		domains: ['Software', 'Mechanical'],
+		skills_used: ['sCAD', 'Generative Design', 'C#'],
+		images: [],
+		links: [],
+		description: `I explored how architected materials could be designed to absorb shocks by controlling their geometry rather than relying on a solid material alone. The project focused on two complementary lattice approaches: hybrid TPMS structures and re-entrant honeycombs.
+
+## Generative Design
+
+Using PicoGK, a voxel-based geometry kernel for C#, I built a procedural workflow to generate and vary the structures. One design track explored hybrid TPMS geometries combining a Schwarz network with Diamond sheet surfaces. The other investigated re-entrant honeycomb lattices, whose geometry can produce auxetic behavior and distinctive deformation under compression.
+
+Across both approaches, I studied how geometric parameters shape stiffness, deformation, and energy absorption, with the goal of finding structures suited to impact and shock mitigation.
+
+## Prototyping and Validation
+
+I first manufactured the geometries on a Formlabs Fuse 1+ using SLS Nylon 12. These prints helped validate the designs and their manufacturability. I then produced the functional test samples in TPU using SLS, to investigate the response of a more flexible material under compression and impact.
+
+## Potential Applications
+
+The longer-term application areas I considered were protective or bullet-resistant jacket components, cushioning for beds and pillows, and energy-absorbing elements in running shoes. These were design targets for exploring the potential of the structures, rather than finished products.`
+	},
+	{
 		id: 'PRJ-25-09',
 		slug: 'smartlock',
 		name: 'Smart Lock',
